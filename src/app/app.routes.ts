@@ -5,7 +5,7 @@ import { authGuard, adminGuard } from './services/auth.guards';
 export const routes: Routes = [
   {
     path: 'login',
-    title: 'Sign in · Tea Ledger',
+    title: 'Sign in · Tea Mitra',
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
@@ -16,38 +16,38 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: 'dashboard',
-        title: 'Dashboard · Tea Ledger',
+        title: 'Dashboard · Tea Mitra',
         loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
         path: 'entries',
-        title: 'Entries · Tea Ledger',
+        title: 'Entries · Tea Mitra',
         loadComponent: () => import('./pages/entries/entries').then((m) => m.Entries),
       },
       {
         path: 'payments',
-        title: 'Payments · Tea Ledger',
+        title: 'Payments · Tea Mitra',
         loadComponent: () => import('./pages/payments/payments').then((m) => m.Payments),
       },
       {
         path: 'reports',
-        title: 'Reports · Tea Ledger',
+        title: 'Reports · Tea Mitra',
         loadComponent: () => import('./pages/reports/reports').then((m) => m.Reports),
       },
       {
         path: 'calendar',
-        title: 'Calendar · Tea Ledger',
+        title: 'Calendar · Tea Mitra',
         loadComponent: () => import('./pages/calendar/calendar').then((m) => m.CalendarPage),
       },
       {
         path: 'users',
-        title: 'Users · Tea Ledger',
+        title: 'Users · Tea Mitra',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/users/users').then((m) => m.Users),
       },
       {
         path: 'settings',
-        title: 'Settings · Tea Ledger',
+        title: 'Settings · Tea Mitra',
         loadComponent: () => import('./pages/settings/settings').then((m) => m.SettingsPage),
       },
     ],

@@ -166,7 +166,7 @@ export class Reports {
       Date: '', Drink: '', Quantity: '', 'Unit Price': '', Total: '', Notes: '',
     });
     const lines: string[] = [];
-    lines.push(`Tea Ledger Report,${this.rangeLabel()}`);
+    lines.push(`Tea Mitra Report,${this.rangeLabel()}`);
     lines.push('');
     lines.push('Summary');
     for (const [k, v] of this.summaryRows()) lines.push(`${esc(k)},${esc(v)}`);
@@ -182,7 +182,7 @@ export class Reports {
     if (!this.report()) return;
     const wb = XLSX.utils.book_new();
     const summaryWs = XLSX.utils.aoa_to_sheet([
-      ['Tea Ledger Report', this.rangeLabel()],
+      ['Tea Mitra Report', this.rangeLabel()],
       [],
       ...this.summaryRows(),
     ]);
@@ -198,7 +198,7 @@ export class Reports {
     if (!r) return;
     const doc = new jsPDF();
     doc.setFontSize(16);
-    doc.text('Tea Ledger Report', 14, 18);
+    doc.text('Tea Mitra Report', 14, 18);
     doc.setFontSize(10);
     doc.setTextColor(110);
     doc.text(this.rangeLabel(), 14, 25);
