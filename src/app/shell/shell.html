@@ -7,12 +7,8 @@
     </a>
 
     <nav class="tl-topnav">
-      @for (item of nav; track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          class="tl-navlink"
-        >
+      @for (item of visibleNav(); track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active" class="tl-navlink">
           <mat-icon>{{ item.icon }}</mat-icon>
           <span>{{ item.label }}</span>
         </a>
@@ -27,6 +23,23 @@
     >
       <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     </button>
+
+    <button mat-button class="user-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
+      <span class="user-avatar">{{ initials() }}</span>
+      <span class="user-name">{{ user()?.name }}</span>
+      <mat-icon class="user-caret">arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <div class="menu-user" (click)="$event.stopPropagation()">
+        <div class="menu-name">{{ user()?.name }}</div>
+        <div class="menu-email">{{ user()?.email }}</div>
+        <span class="tl-chip role-{{ user()?.role }}">{{ user()?.role }}</span>
+      </div>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </header>
 
   <!-- Page content -->
@@ -49,12 +62,8 @@
 
   <!-- Mobile bottom nav -->
   <nav class="tl-bottomnav tl-no-print">
-    @for (item of nav; track item.path) {
-      <a
-        [routerLink]="item.path"
-        routerLinkActive="active"
-        class="tl-bottomlink"
-      >
+    @for (item of visibleNav(); track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" class="tl-bottomlink">
         <mat-icon>{{ item.icon }}</mat-icon>
         <span>{{ item.label }}</span>
       </a>

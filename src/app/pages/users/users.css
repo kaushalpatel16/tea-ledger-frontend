@@ -1,0 +1,50 @@
+.users-card {
+  padding: 18px 20px;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.you-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(34, 160, 107, 0.16);
+  color: var(--tl-accent, #16a34a);
+  vertical-align: middle;
+}
+
+.email-cell {
+  color: var(--tl-text-muted);
+}
+
+.role-admin {
+  background: rgba(34, 160, 107, 0.16);
+  color: var(--tl-accent, #16a34a);
+}
+
+.role-member {
+  background: rgba(120, 120, 120, 0.14);
+  color: var(--tl-text-muted, #64748b);
+}
+
+.status-active {
+  background: rgba(22, 163, 74, 0.14);
+  color: #16a34a;
+}
+
+.status-inactive {
+  background: rgba(220, 38, 38, 0.14);
+  color: #dc2626;
+}
+
+.actions-col {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}

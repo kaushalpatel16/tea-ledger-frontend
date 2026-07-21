@@ -1,0 +1,81 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Users</h1>
+    <button mat-flat-button color="primary" (click)="add()">
+      <mat-icon>person_add</mat-icon>
+      Add User
+    </button>
+  </div>
+
+  <div class="tl-card users-card">
+    <h2 class="tl-section-title">Team members</h2>
+
+    <div class="table-scroll">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of users(); track u.id) {
+            <tr>
+              <td>
+                <span class="name">{{ u.name }}</span>
+                @if (isSelf(u)) {
+                  <span class="you-badge">You</span>
+                }
+              </td>
+              <td class="email-cell">{{ u.email }}</td>
+              <td>
+                <span class="tl-chip role-{{ u.role }}">
+                  {{ u.role === 'admin' ? 'Admin' : 'Member' }}
+                </span>
+              </td>
+              <td>
+                <span class="tl-chip status-{{ u.active ? 'active' : 'inactive' }}">
+                  {{ u.active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ fmtDate(u.createdAt) }}</td>
+              <td class="actions-col">
+                <button
+                  mat-icon-button
+                  matTooltip="Edit user"
+                  aria-label="Edit user"
+                  (click)="edit(u)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  [disabled]="isSelf(u)"
+                  [matTooltip]="isSelf(u) ? 'You can\'t delete your own account' : 'Delete user'"
+                  aria-label="Delete user"
+                  (click)="remove(u)"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty" colspan="6">
+                @if (loading()) {
+                  Loading users…
+                } @else {
+                  No users yet. Use “Add User” to create one.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

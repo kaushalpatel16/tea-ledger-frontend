@@ -1,5 +1,21 @@
 export type Beverage = 'tea' | 'coffee';
 export type PaymentMethod = 'cash' | 'upi' | 'bank';
+export type Role = 'admin' | 'member';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
 
 export interface Transaction {
   id: string;

@@ -6,8 +6,10 @@ import {
   Payment,
   PaymentMethod,
   ReportData,
+  Role,
   Settings,
   Transaction,
+  User,
 } from '../models';
 import { environment } from '../../environments/environment';
 
@@ -22,6 +24,14 @@ export interface PaymentInput {
   paymentMethod: PaymentMethod;
   date: string;
   notes?: string;
+}
+
+export interface UserInput {
+  name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  active: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -73,6 +83,22 @@ export class ApiService {
   deletePayment(id: string): Observable<{ success: boolean }> {
     return this.http
       .delete<{ success: boolean }>(`${BASE}/payments/${id}`)
+      .pipe(tap(() => this.bump()));
+  }
+
+  // ---- Users (admin) ----
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${BASE}/users`);
+  }
+  createUser(body: UserInput): Observable<User> {
+    return this.http.post<User>(`${BASE}/users`, body).pipe(tap(() => this.bump()));
+  }
+  updateUser(id: string, body: Partial<UserInput>): Observable<User> {
+    return this.http.put<User>(`${BASE}/users/${id}`, body).pipe(tap(() => this.bump()));
+  }
+  deleteUser(id: string): Observable<{ success: boolean }> {
+    return this.http
+      .delete<{ success: boolean }>(`${BASE}/users/${id}`)
       .pipe(tap(() => this.bump()));
   }
 
