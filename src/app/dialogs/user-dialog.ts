@@ -110,6 +110,11 @@ export interface UserDialogData {
             <mat-slide-toggle formControlName="active" />
           </div>
 
+          <div class="toggle">
+            <span>Allow changing own password</span>
+            <mat-slide-toggle formControlName="canChangePassword" />
+          </div>
+
           @if (errorMsg()) {
             <div class="error">{{ errorMsg() }}</div>
           }
@@ -146,6 +151,7 @@ export class UserDialog {
     ],
     role: ['member' as Role, Validators.required],
     active: [true],
+    canChangePassword: [true],
   });
 
   constructor() {
@@ -156,6 +162,7 @@ export class UserDialog {
         email: u.email,
         role: u.role,
         active: u.active,
+        canChangePassword: u.canChangePassword,
       });
     }
   }
@@ -171,6 +178,7 @@ export class UserDialog {
       email: v.email.trim(),
       role: v.role,
       active: v.active,
+      canChangePassword: v.canChangePassword,
     };
     if (v.password) payload.password = v.password;
 

@@ -8,6 +8,7 @@ export interface User {
   email: string;
   role: Role;
   active: boolean;
+  canChangePassword: boolean;
   createdAt: string;
   updatedAt: string;
 }

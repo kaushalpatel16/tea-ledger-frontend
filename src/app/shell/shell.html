@@ -35,6 +35,12 @@
         <div class="menu-email">{{ user()?.email }}</div>
         <span class="tl-chip role-{{ user()?.role }}">{{ user()?.role }}</span>
       </div>
+      @if (canChangePassword()) {
+        <button mat-menu-item (click)="changePassword()">
+          <mat-icon>lock_reset</mat-icon>
+          <span>Change my password</span>
+        </button>
+      }
       <button mat-menu-item (click)="logout()">
         <mat-icon>logout</mat-icon>
         <span>Logout</span>

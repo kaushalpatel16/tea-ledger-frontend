@@ -32,6 +32,7 @@ export interface UserInput {
   password?: string;
   role: Role;
   active: boolean;
+  canChangePassword: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -37,6 +37,7 @@ export class Shell {
   isDark = this.theme.isDark;
   user = this.auth.currentUser;
   isAdmin = this.auth.isAdmin;
+  canChangePassword = this.auth.canChangeOwnPassword;
 
   private nav: NavItem[] = [
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
@@ -67,6 +68,10 @@ export class Shell {
 
   addEntry() {
     this.ui.openEntry();
+  }
+
+  changePassword() {
+    this.ui.openChangePassword();
   }
 
   logout() {

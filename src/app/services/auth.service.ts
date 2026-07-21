@@ -34,6 +34,19 @@ export class AuthService {
       .pipe(tap((res) => this.setSession(res)));
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${environment.apiBase}/auth/change-password`, {
+      currentPassword,
+      newPassword,
+    });
+  }
+
+  /** True if the logged-in user may change their own password. */
+  canChangeOwnPassword = computed(() => {
+    const u = this.currentUser();
+    return !!u && (u.role === 'admin' || u.canChangePassword);
+  });
+
   private setSession(res: AuthResponse) {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USER_KEY, JSON.stringify(res.user));
