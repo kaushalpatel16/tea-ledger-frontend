@@ -9,8 +9,9 @@ import {
   Settings,
   Transaction,
 } from '../models';
+import { environment } from '../../environments/environment';
 
-const BASE = '/api';
+const BASE = environment.apiBase;
 
 export type TransactionInput = Partial<
   Pick<Transaction, 'datetime' | 'beverageType' | 'quantity' | 'unitPrice' | 'notes'>
