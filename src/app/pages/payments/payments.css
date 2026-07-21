@@ -1,0 +1,87 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 720px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  padding: 18px 20px;
+}
+
+.summary-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tl-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 6px 0 4px;
+}
+
+.summary-value.is-paid {
+  color: var(--tl-positive, #16a34a);
+}
+
+.summary-value.is-pending {
+  color: var(--tl-negative, #dc2626);
+}
+
+.summary-hint {
+  font-size: 0.8rem;
+  color: var(--tl-text-muted);
+}
+
+.history-card {
+  padding: 18px 20px;
+}
+
+.method-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--tl-chip-bg, rgba(120, 120, 120, 0.12));
+  white-space: nowrap;
+}
+
+.method-cash {
+  background: rgba(22, 163, 74, 0.14);
+  color: #16a34a;
+}
+
+.method-upi {
+  background: rgba(37, 99, 235, 0.14);
+  color: #2563eb;
+}
+
+.method-bank {
+  background: rgba(139, 92, 246, 0.16);
+  color: #8b5cf6;
+}
+
+.notes-cell {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--tl-text-muted);
+}
+
+.actions-col {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}

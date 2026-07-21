@@ -1,0 +1,164 @@
+.tl-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Top bar ---- */
+.tl-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+  background: color-mix(in srgb, var(--tl-surface) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--tl-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: var(--tl-text);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.brand-logo {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.tl-topnav {
+  display: flex;
+  gap: 4px;
+  margin-left: 8px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.tl-navlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--tl-text-muted);
+  font-weight: 500;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.tl-navlink mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.tl-navlink:hover {
+  background: var(--tl-surface-2);
+  color: var(--tl-text);
+}
+.tl-navlink.active {
+  background: color-mix(in srgb, var(--tl-accent) 16%, transparent);
+  color: var(--tl-accent-strong);
+}
+
+.theme-btn {
+  color: var(--tl-text-muted);
+}
+
+.tl-main {
+  flex: 1;
+  padding-bottom: 40px;
+}
+
+/* ---- Floating Add Entry button ---- */
+.tl-fab {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 30;
+  width: auto !important;
+  padding: 0 22px 0 18px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 10px 26px rgba(34, 160, 107, 0.4) !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tl-fab mat-icon {
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 24px;
+}
+.tl-fab-label {
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ---- Mobile bottom nav (hidden on desktop) ---- */
+.tl-bottomnav {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .tl-topnav {
+    display: none;
+  }
+  .tl-bottomnav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    display: flex;
+    justify-content: space-around;
+    background: color-mix(in srgb, var(--tl-surface) 94%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--tl-border);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+  .tl-bottomlink {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--tl-text-muted);
+    font-size: 0.66rem;
+    font-weight: 500;
+    padding: 4px 6px;
+    border-radius: 12px;
+    flex: 1;
+    max-width: 70px;
+  }
+  .tl-bottomlink mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+  .tl-bottomlink.active {
+    color: var(--tl-accent-strong);
+  }
+  .tl-main {
+    padding-bottom: 88px;
+  }
+  .tl-fab {
+    bottom: 82px;
+    right: 16px;
+  }
+  .tl-fab-label {
+    display: none;
+  }
+  .tl-fab {
+    padding: 0 !important;
+    width: 56px !important;
+  }
+}

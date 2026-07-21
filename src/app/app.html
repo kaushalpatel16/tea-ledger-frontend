@@ -1,0 +1,63 @@
+<div class="tl-shell">
+  <!-- Top bar -->
+  <header class="tl-topbar tl-no-print">
+    <a class="brand" routerLink="/dashboard">
+      <span class="brand-logo">🍵</span>
+      <span class="brand-name">Tea Ledger</span>
+    </a>
+
+    <nav class="tl-topnav">
+      @for (item of nav; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          class="tl-navlink"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <button
+      mat-icon-button
+      class="theme-btn"
+      (click)="toggleTheme()"
+      [matTooltip]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+  </header>
+
+  <!-- Page content -->
+  <main class="tl-main">
+    <router-outlet />
+  </main>
+
+  <!-- Floating Add Entry button -->
+  <button
+    class="tl-fab tl-no-print"
+    mat-fab
+    color="primary"
+    (click)="addEntry()"
+    matTooltip="Add Entry"
+    aria-label="Add Entry"
+  >
+    <mat-icon>add</mat-icon>
+    <span class="tl-fab-label">Add Entry</span>
+  </button>
+
+  <!-- Mobile bottom nav -->
+  <nav class="tl-bottomnav tl-no-print">
+    @for (item of nav; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="tl-bottomlink"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+</div>

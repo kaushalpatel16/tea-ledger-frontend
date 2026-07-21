@@ -1,0 +1,72 @@
+.settings-page {
+  max-width: 660px;
+}
+
+.block {
+  padding: 20px;
+  margin-bottom: var(--tl-gap);
+}
+
+.tl-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tl-section-title mat-icon {
+  color: var(--tl-accent);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.price-grid mat-form-field {
+  width: 100%;
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  margin: 4px 0 16px;
+}
+.note mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.toggle-label {
+  font-weight: 600;
+}
+
+.about {
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 520px) {
+  .price-grid {
+    grid-template-columns: 1fr;
+  }
+}

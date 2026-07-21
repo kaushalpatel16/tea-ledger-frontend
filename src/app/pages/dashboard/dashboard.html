@@ -1,0 +1,104 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Dashboard</h1>
+    <a mat-stroked-button routerLink="/reports">
+      <mat-icon>insert_chart</mat-icon> View Reports
+    </a>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (data(); as d) {
+    <!-- Summary cards -->
+    <section class="cards">
+      @for (c of cards(); track c.label) {
+        <div class="tl-card stat" [class]="'tint-' + c.tint">
+          <div class="stat-icon"><mat-icon>{{ c.icon }}</mat-icon></div>
+          <div class="stat-body">
+            <div class="stat-label">{{ c.label }}</div>
+            <div class="stat-value">{{ c.value }} <small>{{ c.sub }}</small></div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Quick stats -->
+    <section class="tl-card quickstats">
+      <h2 class="tl-section-title">Quick statistics</h2>
+      <div class="quickstats-grid">
+        @for (s of quickStats(); track s.label) {
+          <div class="qstat">
+            <mat-icon>{{ s.icon }}</mat-icon>
+            <div>
+              <div class="qstat-value">{{ s.value }}</div>
+              <div class="qstat-label">{{ s.label }}</div>
+              @if (s.hint) { <div class="qstat-hint">{{ s.hint }}</div> }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts">
+      <div class="tl-card chart-card">
+        <h2 class="tl-section-title">Tea vs Coffee</h2>
+        <div class="chart-wrap">
+          @if (hasData()) {
+            <canvas baseChart type="doughnut" [data]="pieData()" [options]="pieOptions"></canvas>
+          } @else { <p class="empty">No orders yet</p> }
+        </div>
+      </div>
+
+      <div class="tl-card chart-card">
+        <h2 class="tl-section-title">Daily expense · last 30 days</h2>
+        <div class="chart-wrap">
+          <canvas baseChart type="line" [data]="lineData()" [options]="lineOptions"></canvas>
+        </div>
+      </div>
+
+      <div class="tl-card chart-card wide">
+        <h2 class="tl-section-title">Monthly expense · last 12 months</h2>
+        <div class="chart-wrap">
+          <canvas baseChart type="bar" [data]="barData()" [options]="barOptions"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent transactions -->
+    <section class="tl-card recent">
+      <div class="recent-head">
+        <h2 class="tl-section-title" style="margin:0">Recent transactions</h2>
+        <a mat-button routerLink="/entries">View all <mat-icon>chevron_right</mat-icon></a>
+      </div>
+      <div class="table-scroll">
+        <table class="tl-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Drink</th>
+              <th class="num">Qty</th>
+              <th class="num">Total</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of d.recent; track t.id) {
+              <tr>
+                <td>{{ fmtDateTime(t.datetime) }}</td>
+                <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
+                <td class="num">{{ t.quantity }}</td>
+                <td class="num">{{ inr(t.total) }}</td>
+                <td class="notes-cell">{{ t.notes || '—' }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="empty">No transactions yet — tap “Add Entry” to start.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

@@ -1,0 +1,90 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Reports</h1>
+    <div class="exports tl-no-print">
+      <button mat-stroked-button (click)="exportPdf()"><mat-icon>picture_as_pdf</mat-icon> PDF</button>
+      <button mat-stroked-button (click)="exportExcel()"><mat-icon>grid_on</mat-icon> Excel</button>
+      <button mat-stroked-button (click)="exportCsv()"><mat-icon>description</mat-icon> CSV</button>
+      <button mat-stroked-button (click)="print()"><mat-icon>print</mat-icon> Print</button>
+    </div>
+  </div>
+
+  <!-- Range selector -->
+  <div class="tl-card controls tl-no-print">
+    <mat-button-toggle-group [value]="mode()" (change)="mode.set($event.value)" hideSingleSelectionIndicator>
+      <mat-button-toggle value="daily"><mat-icon>today</mat-icon> Daily</mat-button-toggle>
+      <mat-button-toggle value="monthly"><mat-icon>calendar_month</mat-icon> Monthly</mat-button-toggle>
+      <mat-button-toggle value="custom"><mat-icon>date_range</mat-icon> Custom</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="date-inputs">
+      @if (mode() === 'daily') {
+        <mat-form-field appearance="outline">
+          <mat-label>Day</mat-label>
+          <input matInput type="date" [ngModel]="from()" (ngModelChange)="from.set($event)" />
+        </mat-form-field>
+      } @else if (mode() === 'monthly') {
+        <mat-form-field appearance="outline">
+          <mat-label>Month</mat-label>
+          <input matInput type="month" [ngModel]="month()" (ngModelChange)="month.set($event)" />
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline">
+          <mat-label>From</mat-label>
+          <input matInput type="date" [ngModel]="from()" (ngModelChange)="from.set($event)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>To</mat-label>
+          <input matInput type="date" [ngModel]="to()" (ngModelChange)="to.set($event)" />
+        </mat-form-field>
+      }
+    </div>
+  </div>
+
+  <h2 class="tl-print-only" style="margin:16px 0">Tea Ledger Report · {{ rangeLabel() }}</h2>
+
+  @if (report(); as r) {
+    <!-- Summary tiles -->
+    <section class="tiles">
+      @for (t of tiles(); track t.label) {
+        <div class="tl-card tile" [class]="'tint-' + t.tint">
+          <div class="tile-label">{{ t.label }}</div>
+          <div class="tile-value">{{ t.value }} <small>{{ t.sub }}</small></div>
+        </div>
+      }
+    </section>
+
+    <!-- Detail table -->
+    <section class="tl-card detail">
+      <h2 class="tl-section-title">Transactions <span class="tl-muted">({{ r.orders }})</span></h2>
+      <div class="table-scroll">
+        <table class="tl-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Drink</th>
+              <th class="num">Qty</th>
+              <th class="num">Unit Price</th>
+              <th class="num">Total</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of r.transactions; track t.id) {
+              <tr>
+                <td>{{ fmtDateTime(t.datetime) }}</td>
+                <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
+                <td class="num">{{ t.quantity }}</td>
+                <td class="num">{{ inr(t.unitPrice) }}</td>
+                <td class="num">{{ inr(t.total) }}</td>
+                <td>{{ t.notes || '—' }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6" class="empty">No transactions in this range.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

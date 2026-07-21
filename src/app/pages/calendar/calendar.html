@@ -1,0 +1,92 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Calendar</h1>
+    <div class="cal-nav">
+      <button mat-stroked-button (click)="goToday()">
+        <mat-icon>today</mat-icon> Today
+      </button>
+      <button mat-icon-button matTooltip="Previous month" (click)="prevMonth()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span class="cal-month">{{ monthLabel() }}</span>
+      <button mat-icon-button matTooltip="Next month" (click)="nextMonth()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="cal-layout">
+    <!-- Calendar grid -->
+    <section class="tl-card cal-grid-card">
+      <div class="cal-weekdays">
+        @for (w of weekdays; track w) {
+          <div class="cal-weekday">{{ w }}</div>
+        }
+      </div>
+      <div class="cal-grid">
+        @for (cell of cells(); track cell.key) {
+          @if (cell.date) {
+            <button
+              type="button"
+              class="cal-cell"
+              [class.today]="cell.isToday"
+              [class.selected]="isSelected(cell)"
+              [class.has-entries]="cell.count > 0"
+              (click)="select(cell)"
+            >
+              <span class="cal-day">{{ cell.day }}</span>
+              @if (cell.count > 0) {
+                <span class="cal-dot"></span>
+                <span class="cal-total">{{ inr(cell.total) }}</span>
+              }
+            </button>
+          } @else {
+            <div class="cal-cell blank"></div>
+          }
+        }
+      </div>
+    </section>
+
+    <!-- Day panel -->
+    <section class="tl-card cal-panel">
+      @if (selected()) {
+        <div class="panel-head">
+          <div>
+            <h2 class="tl-section-title" style="margin:0">{{ selectedLabel() }}</h2>
+            <span class="tl-muted">{{ selectedEntries().length }} entr{{ selectedEntries().length === 1 ? 'y' : 'ies' }} · {{ inr(selectedTotal()) }}</span>
+          </div>
+          <button mat-stroked-button color="primary" (click)="addForSelected()">
+            <mat-icon>add</mat-icon> Add
+          </button>
+        </div>
+
+        @if (selectedEntries().length) {
+          <ul class="panel-list">
+            @for (t of selectedEntries(); track t.id) {
+              <li class="panel-item">
+                <div class="pi-main">
+                  <span class="pi-time">{{ time(t.datetime) }}</span>
+                  <span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span>
+                  <span class="pi-qty">× {{ t.quantity }}</span>
+                </div>
+                <div class="pi-side">
+                  <span class="pi-total">{{ inr(t.total) }}</span>
+                  <button mat-icon-button matTooltip="Edit" (click)="edit(t)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="empty">No entries for this day.</p>
+        }
+      } @else {
+        <div class="panel-placeholder">
+          <mat-icon>event</mat-icon>
+          <p>Select a day to see its tea &amp; coffee entries.</p>
+        </div>
+      }
+    </section>
+  </div>
+</div>

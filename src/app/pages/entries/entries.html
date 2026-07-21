@@ -1,0 +1,129 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Entries</h1>
+    <span class="tl-muted count">{{ filteredCount() }} of {{ transactions().length }} entries</span>
+  </div>
+
+  <!-- Toolbar: search + filters -->
+  <div class="tl-card toolbar">
+    <div class="toolbar-row">
+      <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Search notes, drink…"
+          [ngModel]="search()"
+          (ngModelChange)="onSearch($event)"
+        />
+        @if (search()) {
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="onSearch('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon> Reset
+      </button>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">Time</span>
+        <mat-button-toggle-group [value]="range()" (change)="setRange($event)" hideSingleSelectionIndicator>
+          <mat-button-toggle value="all">All</mat-button-toggle>
+          <mat-button-toggle value="today">Today</mat-button-toggle>
+          <mat-button-toggle value="week">Week</mat-button-toggle>
+          <mat-button-toggle value="month">Month</mat-button-toggle>
+          <mat-button-toggle value="custom">Custom</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Drink</span>
+        <mat-button-toggle-group [value]="beverage()" (change)="setBeverage($event)" hideSingleSelectionIndicator>
+          <mat-button-toggle value="all">All</mat-button-toggle>
+          <mat-button-toggle value="tea">Tea</mat-button-toggle>
+          <mat-button-toggle value="coffee">Coffee</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    @if (range() === 'custom') {
+      <div class="custom-range">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>From</mat-label>
+          <input matInput type="date" [ngModel]="fromDate()" (ngModelChange)="onFromDate($event)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>To</mat-label>
+          <input matInput type="date" [ngModel]="toDate()" (ngModelChange)="onToDate($event)" />
+        </mat-form-field>
+      </div>
+    }
+  </div>
+
+  <!-- Table -->
+  <div class="tl-card table-card">
+    <div class="table-scroll">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="sortBy('datetime')">
+              Date &amp; Time <mat-icon class="sort-ic">{{ sortArrow('datetime') }}</mat-icon>
+            </th>
+            <th>Drink</th>
+            <th class="num sortable" (click)="sortBy('quantity')">
+              Qty <mat-icon class="sort-ic">{{ sortArrow('quantity') }}</mat-icon>
+            </th>
+            <th class="num">Unit Price</th>
+            <th class="num sortable" (click)="sortBy('total')">
+              Total <mat-icon class="sort-ic">{{ sortArrow('total') }}</mat-icon>
+            </th>
+            <th>Notes</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of paged(); track t.id) {
+            <tr>
+              <td>{{ fmtDateTime(t.datetime) }}</td>
+              <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
+              <td class="num">{{ t.quantity }}</td>
+              <td class="num">{{ inr(t.unitPrice) }}</td>
+              <td class="num">{{ inr(t.total) }}</td>
+              <td class="notes-cell" [title]="t.notes">{{ t.notes || '—' }}</td>
+              <td class="actions-col">
+                <button mat-icon-button matTooltip="Edit" (click)="edit(t)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Delete" color="warn" (click)="remove(t)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">
+                @if (transactions().length === 0) {
+                  No entries yet — tap “Add Entry” to record your first order.
+                } @else {
+                  No entries match the current filters.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="filteredCount()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      (page)="onPage($event)"
+    />
+  </div>
+</div>

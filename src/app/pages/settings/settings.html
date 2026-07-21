@@ -1,0 +1,67 @@
+<div class="tl-page settings-page">
+  <div class="tl-page-head">
+    <h1>Settings</h1>
+  </div>
+
+  <!-- Prices -->
+  <section class="tl-card block">
+    <h2 class="tl-section-title">
+      <mat-icon>sell</mat-icon> Beverage Prices
+    </h2>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="price-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Tea Price</mat-label>
+          <span matTextPrefix>₹&nbsp;</span>
+          <input matInput type="number" min="0" step="0.5" formControlName="teaPrice" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Coffee Price</mat-label>
+          <span matTextPrefix>₹&nbsp;</span>
+          <input matInput type="number" min="0" step="0.5" formControlName="coffeePrice" />
+        </mat-form-field>
+      </div>
+      <p class="tl-muted note">
+        <mat-icon>info</mat-icon>
+        Changing prices only affects new entries. Existing records keep the price they were saved
+        with.
+      </p>
+      <div class="actions">
+        @if (updatedAt()) {
+          <span class="tl-muted">Last updated: {{ fmtDateTime(updatedAt()) }}</span>
+        }
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || form.pristine || saving()"
+        >
+          <mat-icon>save</mat-icon> Save Prices
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Appearance -->
+  <section class="tl-card block">
+    <h2 class="tl-section-title"><mat-icon>palette</mat-icon> Appearance</h2>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Dark mode</div>
+        <div class="tl-muted">Use a darker charcoal theme, easier on the eyes at night.</div>
+      </div>
+      <mat-slide-toggle [checked]="theme.isDark()" (change)="toggleTheme()" color="primary" />
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="tl-card block">
+    <h2 class="tl-section-title"><mat-icon>local_cafe</mat-icon> About Tea Ledger</h2>
+    <p class="tl-muted about">
+      Tea Ledger replaces the paper notebook the office uses to track daily tea and coffee
+      deliveries. Every order is recorded with its price at the time, payments to the vendor are
+      logged separately, and the pending balance is calculated automatically — no month-end manual
+      counting required.
+    </p>
+  </section>
+</div>

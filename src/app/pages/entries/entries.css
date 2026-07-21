@@ -1,0 +1,93 @@
+.count {
+  font-size: 0.9rem;
+}
+
+.toolbar {
+  padding: 16px;
+  margin-bottom: var(--tl-gap);
+}
+
+.toolbar-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.search {
+  flex: 1;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tl-text-muted);
+}
+
+.custom-range {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.table-card {
+  padding: 6px 6px 0;
+  overflow: hidden;
+}
+
+.sort-ic {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+
+.actions-col {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.notes-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  color: var(--tl-text-muted);
+}
+
+/* Compact the action icon buttons a touch */
+.actions-col .mat-mdc-icon-button {
+  width: 38px;
+  height: 38px;
+  padding: 7px;
+}
+
+mat-paginator {
+  background: transparent;
+  --mat-paginator-container-background-color: transparent;
+}
+
+@media (max-width: 700px) {
+  .filters {
+    gap: 12px;
+  }
+  .toolbar-row {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,237 @@
+@use '@angular/material' as mat;
+
+// ---- Angular Material theme (green accent, Material-inspired) ----
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$spring-green-palette,
+      ),
+      typography: (
+        plain-family: 'Inter, system-ui, sans-serif',
+        brand-family: 'Inter, system-ui, sans-serif',
+      ),
+      density: 0,
+    )
+  );
+
+  // App-level design tokens (soft white / light-gray / green accent).
+  --tl-accent: #22a06b;
+  --tl-accent-strong: #17825a;
+  --tl-tea: #4caf7d;
+  --tl-coffee: #b07a4a;
+  --tl-radius: 16px;
+  --tl-gap: 16px;
+
+  // Light surfaces.
+  --tl-bg: #f4f6f5;
+  --tl-surface: #ffffff;
+  --tl-surface-2: #f8faf9;
+  --tl-border: #e6eae8;
+  --tl-text: #1c2420;
+  --tl-text-muted: #6b7a73;
+  --tl-shadow: 0 1px 2px rgba(16, 40, 30, 0.04), 0 8px 24px rgba(16, 40, 30, 0.06);
+  --tl-positive: #22a06b;
+  --tl-negative: #e5484d;
+}
+
+html.tl-dark {
+  color-scheme: dark;
+  --tl-bg: #10161300;
+  --tl-bg: #0f1512;
+  --tl-surface: #171e1a;
+  --tl-surface-2: #1e2621;
+  --tl-border: #2a332d;
+  --tl-text: #e7ede9;
+  --tl-text-muted: #9aa8a1;
+  --tl-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+  --tl-accent: #35c98c;
+  --tl-accent-strong: #58d6a2;
+  --tl-tea: #5fce97;
+  --tl-coffee: #cf9a6a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--tl-bg);
+  color: var(--tl-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.material-icons-round,
+.mat-icon {
+  font-family: 'Material Icons Round';
+}
+
+// ---- Reusable app utility classes ----
+.tl-card {
+  background: var(--tl-surface);
+  border: 1px solid var(--tl-border);
+  border-radius: var(--tl-radius);
+  box-shadow: var(--tl-shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
+}
+
+.tl-section-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--tl-text);
+}
+
+.tl-muted {
+  color: var(--tl-text-muted);
+}
+
+.tl-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: tl-fade 0.35s ease both;
+}
+
+.tl-page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tl-page-head h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+@keyframes tl-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Chips for status / beverage
+.tl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.tl-chip--tea { background: rgba(76, 175, 125, 0.16); color: var(--tl-tea); }
+.tl-chip--coffee { background: rgba(176, 122, 74, 0.18); color: var(--tl-coffee); }
+
+// Angular Material surface tweaks
+.mat-mdc-card,
+.mat-mdc-dialog-surface {
+  border-radius: var(--tl-radius) !important;
+}
+
+// Align icon + text inside button-toggles (e.g. Daily/Monthly/Custom)
+.mat-button-toggle-label-content {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+}
+.mat-button-toggle-label-content .mat-icon {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.mat-mdc-snack-bar-container.tl-snack {
+  --mdc-snackbar-container-color: var(--tl-accent-strong);
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+// Scrollbar
+::-webkit-scrollbar { height: 10px; width: 10px; }
+::-webkit-scrollbar-thumb { background: var(--tl-border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tl-text-muted); }
+
+// ---- Shared data table ----
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
+.tl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.tl-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--tl-surface-2);
+  color: var(--tl-text-muted);
+  font-weight: 600;
+  text-align: left;
+  padding: 11px 14px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--tl-border);
+  z-index: 1;
+}
+.tl-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--tl-border);
+  color: var(--tl-text);
+  white-space: nowrap;
+}
+.tl-table tbody tr:hover td {
+  background: var(--tl-surface-2);
+}
+.tl-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.tl-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tl-table .empty,
+.empty {
+  text-align: center;
+  color: var(--tl-text-muted);
+  padding: 26px 14px;
+}
+.tl-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.tl-table th.sortable:hover {
+  color: var(--tl-text);
+}
+
+// Print helpers
+.tl-print-only { display: none; }
+@media print {
+  .tl-no-print { display: none !important; }
+  .tl-print-only { display: block; }
+  body { background: #fff; }
+  .tl-page { padding: 0; max-width: none; }
+}

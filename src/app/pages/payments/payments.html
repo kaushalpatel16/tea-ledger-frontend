@@ -1,0 +1,89 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Payments</h1>
+    <button mat-flat-button color="primary" (click)="recordPayment()">
+      <mat-icon>add</mat-icon>
+      Record Payment
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="tl-card summary-card">
+      <div class="summary-label">Grand Total</div>
+      <div class="summary-value">{{ inr(grandTotal()) }}</div>
+      <div class="summary-hint">Total billed to date</div>
+    </div>
+
+    <div class="tl-card summary-card">
+      <div class="summary-label">Total Paid</div>
+      <div class="summary-value is-paid">{{ inr(paid()) }}</div>
+      <div class="summary-hint">Last payment: {{ fmtDate(lastPaymentDate()) }}</div>
+    </div>
+
+    <div class="tl-card summary-card">
+      <div class="summary-label">Pending</div>
+      <div class="summary-value is-pending">{{ inr(pending()) }}</div>
+      <div class="summary-hint">Outstanding balance</div>
+    </div>
+  </div>
+
+  <div class="tl-card history-card">
+    <h2 class="tl-section-title">Payment history</h2>
+
+    <div class="table-scroll">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th class="num">Amount</th>
+            <th>Method</th>
+            <th>Notes</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of payments(); track p.id) {
+            <tr>
+              <td>{{ fmtDateTime(p.date) }}</td>
+              <td class="num">{{ inr(p.amount) }}</td>
+              <td>
+                <span class="method-chip method-{{ p.paymentMethod }}">
+                  {{ method(p.paymentMethod).emoji }} {{ method(p.paymentMethod).label }}
+                </span>
+              </td>
+              <td class="notes-cell">{{ p.notes || '—' }}</td>
+              <td class="actions-col">
+                <button
+                  mat-icon-button
+                  matTooltip="Edit payment"
+                  aria-label="Edit payment"
+                  (click)="edit(p)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltip="Delete payment"
+                  aria-label="Delete payment"
+                  (click)="remove(p)"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty" colspan="5">
+                @if (loading()) {
+                  Loading payments…
+                } @else {
+                  No payments recorded yet. Use “Record Payment” when you pay the vendor.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
