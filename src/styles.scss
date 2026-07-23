@@ -71,9 +71,31 @@ body {
   transition: background 0.25s ease, color 0.25s ease;
 }
 
-.material-icons-round,
-.mat-icon {
+// Full Material icon-font declaration. Angular adds the `material-icons` class to
+// <mat-icon>, but we only load the "Round" stylesheet (which styles
+// .material-icons-round), so these properties must be declared here — especially
+// `font-feature-settings: 'liga'`, without which ligature names like "search"
+// render as broken glyphs instead of icons.
+mat-icon.mat-icon,
+.material-icons-round {
   font-family: 'Material Icons Round';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 // ---- Reusable app utility classes ----
