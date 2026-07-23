@@ -14,15 +14,49 @@
     <!-- Summary cards -->
     <section class="cards">
       @for (c of cards(); track c.label) {
-        <div class="tl-card stat" [class]="'tint-' + c.tint">
+        <div
+          class="tl-card stat"
+          [class]="'tint-' + c.tint"
+          [class.is-clickable]="c.expandable"
+          [class.is-open]="c.expandable && showQtyBreakdown()"
+          (click)="c.expandable ? toggleQtyBreakdown() : null"
+          [attr.role]="c.expandable ? 'button' : null"
+          [attr.tabindex]="c.expandable ? 0 : null"
+          (keydown.enter)="c.expandable ? toggleQtyBreakdown() : null"
+        >
           <div class="stat-icon"><mat-icon>{{ c.icon }}</mat-icon></div>
           <div class="stat-body">
             <div class="stat-label">{{ c.label }}</div>
             <div class="stat-value">{{ c.value }} <small>{{ c.sub }}</small></div>
           </div>
+          @if (c.expandable) {
+            <mat-icon class="stat-caret">
+              {{ showQtyBreakdown() ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
+          }
         </div>
       }
     </section>
+
+    <!-- Tea / coffee split for the Total Quantity card -->
+    @if (showQtyBreakdown()) {
+      <section class="tl-card qty-breakdown">
+        <h2 class="tl-section-title">Total quantity by drink</h2>
+        <div class="qty-grid">
+          @for (b of qtyBreakdown(); track b.name) {
+            <div class="qty-item" [class]="'tint-' + b.tint">
+              <div class="qty-head">
+                <mat-icon>{{ b.icon }}</mat-icon>
+                <span class="qty-name">{{ b.name }}</span>
+                <span class="qty-pct">{{ b.pct }}%</span>
+              </div>
+              <div class="qty-value">{{ b.qty }} <small>cups</small></div>
+              <div class="qty-bar"><span [style.width.%]="b.pct"></span></div>
+            </div>
+          }
+        </div>
+      </section>
+    }
 
     <!-- Quick stats -->
     <section class="tl-card quickstats">

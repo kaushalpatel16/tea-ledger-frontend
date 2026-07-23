@@ -53,6 +53,33 @@ export class Dashboard {
       { label: 'Amount Paid', value: inr(c.amountPaid), sub: '', icon: 'check_circle', tint: 'paid' },
       { label: 'Pending', value: inr(c.pending), sub: '', icon: 'schedule', tint: 'pending' },
       { label: 'Total Orders', value: `${c.totalOrders}`, sub: 'entries', icon: 'receipt_long', tint: 'accent' },
+      {
+        label: 'Total Quantity',
+        value: `${c.totalQuantity}`,
+        sub: 'cups',
+        icon: 'local_cafe',
+        tint: 'accent',
+        expandable: true,
+      },
+    ];
+  });
+
+  /** Tea/coffee split shown when the Total Quantity card is clicked. */
+  showQtyBreakdown = signal(false);
+
+  toggleQtyBreakdown() {
+    this.showQtyBreakdown.update((v) => !v);
+  }
+
+  qtyBreakdown = computed(() => {
+    const s = this.data()?.stats;
+    const tea = s?.totalTeaQty ?? 0;
+    const coffee = s?.totalCoffeeQty ?? 0;
+    const total = tea + coffee;
+    const pct = (n: number) => (total > 0 ? Math.round((n / total) * 100) : 0);
+    return [
+      { name: 'Tea', qty: tea, pct: pct(tea), tint: 'tea', icon: 'emoji_food_beverage' },
+      { name: 'Coffee', qty: coffee, pct: pct(coffee), tint: 'coffee', icon: 'coffee' },
     ];
   });
 

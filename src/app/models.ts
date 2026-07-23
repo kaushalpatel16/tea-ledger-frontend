@@ -62,11 +62,14 @@ export interface DashboardCards {
   amountPaid: number;
   pending: number;
   totalOrders: number;
+  totalQuantity: number;
 }
 
 export interface DashboardStats {
   avgTeaPerDay: number;
   avgCoffeePerDay: number;
+  totalTeaQty: number;
+  totalCoffeeQty: number;
   highestExpenseDay: { date: string; amount: number } | null;
   currentMonthSpend: number;
   lastPaymentDate: string | null;

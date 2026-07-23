@@ -57,6 +57,92 @@
 .tint-paid .stat-icon { background: rgba(34,160,107,0.16); color: var(--tl-positive); }
 .tint-pending .stat-icon { background: rgba(229,72,77,0.14); color: var(--tl-negative); }
 
+/* Clickable "Total Quantity" card */
+.stat.is-clickable {
+  cursor: pointer;
+  position: relative;
+}
+.stat.is-clickable:hover {
+  border-color: color-mix(in srgb, var(--tl-accent) 45%, var(--tl-border));
+}
+.stat.is-open {
+  border-color: var(--tl-accent);
+}
+.stat-caret {
+  color: var(--tl-text-muted);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Tea / coffee split panel */
+.qty-breakdown {
+  padding: 18px;
+  margin-bottom: var(--tl-gap);
+  animation: tl-fade 0.25s ease both;
+}
+.qty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.qty-item {
+  padding: 14px 16px;
+  background: var(--tl-surface-2);
+  border: 1px solid var(--tl-border);
+  border-radius: 12px;
+}
+.qty-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.qty-head mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.qty-name {
+  font-weight: 600;
+  flex: 1;
+}
+.qty-pct {
+  font-size: 0.8rem;
+  color: var(--tl-text-muted);
+  font-weight: 600;
+}
+.qty-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.qty-value small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--tl-text-muted);
+}
+.qty-bar {
+  margin-top: 10px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tl-border);
+  overflow: hidden;
+}
+.qty-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+.qty-item.tint-tea .qty-head mat-icon,
+.qty-item.tint-tea .qty-pct { color: var(--tl-tea); }
+.qty-item.tint-tea .qty-bar span { background: var(--tl-tea); }
+.qty-item.tint-coffee .qty-head mat-icon,
+.qty-item.tint-coffee .qty-pct { color: var(--tl-coffee); }
+.qty-item.tint-coffee .qty-bar span { background: var(--tl-coffee); }
+
 .quickstats {
   padding: 18px;
   margin-bottom: var(--tl-gap);
