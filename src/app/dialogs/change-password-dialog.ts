@@ -64,12 +64,40 @@ function matchPasswords(group: AbstractControl): ValidationErrors | null {
         }
         <mat-form-field appearance="outline">
           <mat-label>Current password</mat-label>
-          <input matInput type="password" formControlName="currentPassword" autocomplete="current-password" />
+          <input
+            matInput
+            [type]="hideCurrent() ? 'password' : 'text'"
+            formControlName="currentPassword"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideCurrent.set(!hideCurrent())"
+            [attr.aria-label]="hideCurrent() ? 'Show password' : 'Hide password'"
+          >
+            <mat-icon>{{ hideCurrent() ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>New password</mat-label>
-          <input matInput type="password" formControlName="newPassword" autocomplete="new-password" />
+          <input
+            matInput
+            [type]="hideNew() ? 'password' : 'text'"
+            formControlName="newPassword"
+            autocomplete="new-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideNew.set(!hideNew())"
+            [attr.aria-label]="hideNew() ? 'Show password' : 'Hide password'"
+          >
+            <mat-icon>{{ hideNew() ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
           @if (form.controls.newPassword.touched && form.controls.newPassword.hasError('minlength')) {
             <mat-error>At least 6 characters</mat-error>
           }
@@ -77,7 +105,21 @@ function matchPasswords(group: AbstractControl): ValidationErrors | null {
 
         <mat-form-field appearance="outline">
           <mat-label>Confirm new password</mat-label>
-          <input matInput type="password" formControlName="confirmPassword" autocomplete="new-password" />
+          <input
+            matInput
+            [type]="hideConfirm() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideConfirm.set(!hideConfirm())"
+            [attr.aria-label]="hideConfirm() ? 'Show password' : 'Hide password'"
+          >
+            <mat-icon>{{ hideConfirm() ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
           @if (form.hasError('mismatch') && form.controls.confirmPassword.touched) {
             <mat-error>Passwords don’t match</mat-error>
           }
@@ -99,6 +141,9 @@ export class ChangePasswordDialog {
 
   saving = signal(false);
   error = signal('');
+  hideCurrent = signal(true);
+  hideNew = signal(true);
+  hideConfirm = signal(true);
 
   form = this.fb.nonNullable.group(
     {

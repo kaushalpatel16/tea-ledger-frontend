@@ -60,12 +60,17 @@
       <h2 class="tl-section-title" style="margin:0">
         <mat-icon>call</mat-icon> Contacts
       </h2>
-      <button mat-flat-button color="primary" (click)="addContact()">
-        <mat-icon>add</mat-icon> Add Contact
-      </button>
+      @if (canManageContacts()) {
+        <button mat-flat-button color="primary" (click)="addContact()">
+          <mat-icon>add</mat-icon> Add Contact
+        </button>
+      }
     </div>
     <p class="tl-muted note">
       These appear in the phone menu at the top of the app for quick dialling.
+      @if (!canManageContacts()) {
+        You don’t have permission to change them — ask an admin.
+      }
     </p>
 
     @if (contacts().length) {
@@ -77,19 +82,27 @@
               <div class="ci-name">{{ c.name }}</div>
               <a class="ci-phone" [href]="'tel:' + c.phone">{{ c.phone }}</a>
             </div>
-            <div class="ci-actions">
-              <button mat-icon-button matTooltip="Edit" (click)="editContact(c)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button matTooltip="Delete" (click)="removeContact(c)">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-            </div>
+            @if (canManageContacts()) {
+              <div class="ci-actions">
+                <button mat-icon-button matTooltip="Edit" (click)="editContact(c)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Delete" (click)="removeContact(c)">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            }
           </li>
         }
       </ul>
     } @else {
-      <p class="empty">No contacts yet. Add one to see it in the phone menu.</p>
+      <p class="empty">
+        @if (canManageContacts()) {
+          No contacts yet. Add one to see it in the phone menu.
+        } @else {
+          No contacts have been added yet.
+        }
+      </p>
     }
   </section>
 

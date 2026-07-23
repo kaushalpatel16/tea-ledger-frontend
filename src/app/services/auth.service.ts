@@ -47,6 +47,12 @@ export class AuthService {
     return !!u && (u.role === 'admin' || u.canChangePassword);
   });
 
+  /** True if the logged-in user may add/edit/delete contacts. */
+  canManageContacts = computed(() => {
+    const u = this.currentUser();
+    return !!u && (u.role === 'admin' || u.canManageContacts);
+  });
+
   private setSession(res: AuthResponse) {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USER_KEY, JSON.stringify(res.user));

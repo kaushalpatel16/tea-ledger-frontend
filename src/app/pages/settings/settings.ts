@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../services/api.service';
 import { ThemeService } from '../../services/theme.service';
 import { UiService } from '../../services/ui.service';
+import { AuthService } from '../../services/auth.service';
 import { Contact } from '../../models';
 import { fmtDateTime } from '../../util/format';
 
@@ -31,6 +32,10 @@ export class SettingsPage {
   private fb = inject(FormBuilder);
   theme = inject(ThemeService);
   private ui = inject(UiService);
+  private auth = inject(AuthService);
+
+  /** Only admins (or users granted the permission) may edit contacts. */
+  canManageContacts = this.auth.canManageContacts;
 
   fmtDateTime = fmtDateTime;
   updatedAt = signal<string | null>(null);

@@ -88,7 +88,21 @@ export interface UserDialogData {
 
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" />
+            <input
+              matInput
+              [type]="hidePassword() ? 'password' : 'text'"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hidePassword.set(!hidePassword())"
+              [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+            >
+              <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
             @if (isEdit) {
               <mat-hint>Leave blank to keep the current password</mat-hint>
             }
@@ -115,6 +129,11 @@ export interface UserDialogData {
             <mat-slide-toggle formControlName="canChangePassword" />
           </div>
 
+          <div class="toggle">
+            <span>Allow managing contacts</span>
+            <mat-slide-toggle formControlName="canManageContacts" />
+          </div>
+
           @if (errorMsg()) {
             <div class="error">{{ errorMsg() }}</div>
           }
@@ -139,6 +158,7 @@ export class UserDialog {
   isEdit = !!this.data.user;
   saving = signal(false);
   errorMsg = signal('');
+  hidePassword = signal(true);
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -152,6 +172,7 @@ export class UserDialog {
     role: ['member' as Role, Validators.required],
     active: [true],
     canChangePassword: [true],
+    canManageContacts: [true],
   });
 
   constructor() {
@@ -163,6 +184,7 @@ export class UserDialog {
         role: u.role,
         active: u.active,
         canChangePassword: u.canChangePassword,
+        canManageContacts: u.canManageContacts,
       });
     }
   }
@@ -179,6 +201,7 @@ export class UserDialog {
       role: v.role,
       active: v.active,
       canChangePassword: v.canChangePassword,
+      canManageContacts: v.canManageContacts,
     };
     if (v.password) payload.password = v.password;
 

@@ -9,6 +9,7 @@ export interface User {
   role: Role;
   active: boolean;
   canChangePassword: boolean;
+  canManageContacts: boolean;
   createdAt: string;
   updatedAt: string;
 }
