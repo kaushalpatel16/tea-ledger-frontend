@@ -41,10 +41,13 @@ export interface PaymentDialogData {
         gap: 12px 16px;
       }
       .hint {
-        grid-column: 1 / -1;
         color: var(--tl-text-muted);
         font-size: 0.85rem;
-        margin: -4px 0 4px;
+        margin: 0 0 18px;
+        padding: 10px 12px;
+        background: var(--tl-surface-2);
+        border: 1px solid var(--tl-border);
+        border-radius: 10px;
       }
       @media (max-width: 480px) {
         .row {

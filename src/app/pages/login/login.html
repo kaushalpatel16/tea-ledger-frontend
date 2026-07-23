@@ -21,7 +21,7 @@
           autofocus
           placeholder="you@example.com"
         />
-        <mat-icon matPrefix>mail</mat-icon>
+        <mat-icon matIconPrefix>mail</mat-icon>
         @if (form.controls.email.touched && form.controls.email.invalid) {
           <mat-error>Enter a valid email</mat-error>
         }
@@ -35,7 +35,7 @@
           formControlName="password"
           autocomplete="current-password"
         />
-        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon matIconPrefix>lock</mat-icon>
         <button
           mat-icon-button
           matSuffix

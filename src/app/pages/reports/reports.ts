@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -24,6 +26,8 @@ type Mode = 'daily' | 'monthly' | 'custom';
     MatButtonToggleModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
   ],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
@@ -37,9 +41,16 @@ export class Reports {
   fmtDateTime = fmtDateTime;
 
   mode = signal<Mode>('monthly');
-  from = signal(toDateInput(new Date()));
-  to = signal(toDateInput(new Date()));
+  /** Daily mode: the selected day. */
+  day = signal<Date>(new Date());
+  /** Monthly mode: 'YYYY-MM' chosen from the month dropdown. */
   month = signal(monthInput(new Date()));
+  /** Custom mode: range bounds. */
+  fromDate = signal<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  toDate = signal<Date>(new Date());
+
+  /** Last 24 months, newest first, for the month dropdown. */
+  readonly monthOptions = buildMonthOptions(24);
 
   report = signal<ReportData | null>(null);
   loading = signal(false);
@@ -69,45 +80,38 @@ export class Reports {
     effect(() => {
       // Track everything that affects the range + data.
       this.mode();
-      this.from();
-      this.to();
+      this.day();
       this.month();
+      this.fromDate();
+      this.toDate();
       this.api.version();
       this.load();
     });
   }
 
   private isoRange(): { from: string; to: string } | null {
-    const start = (s: string) => {
-      const d = new Date(s + 'T00:00:00');
-      if (isNaN(d.getTime())) return null;
-      d.setHours(0, 0, 0, 0);
-      return d;
-    };
-    const end = (s: string) => {
-      const d = new Date(s + 'T00:00:00');
-      if (isNaN(d.getTime())) return null;
-      d.setHours(23, 59, 59, 999);
-      return d;
-    };
+    const startOfDay = (d: Date) =>
+      new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+    const endOfDay = (d: Date) =>
+      new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
     if (this.mode() === 'daily') {
-      const f = start(this.from());
-      const t = end(this.from());
-      if (!f || !t) return null;
-      return { from: f.toISOString(), to: t.toISOString() };
+      const d = this.day();
+      if (!d || isNaN(d.getTime())) return null;
+      return { from: startOfDay(d).toISOString(), to: endOfDay(d).toISOString() };
     }
     if (this.mode() === 'monthly') {
       const [y, m] = this.month().split('-').map(Number);
       if (!y || !m) return null;
-      const f = new Date(y, m - 1, 1, 0, 0, 0, 0);
-      const t = new Date(y, m, 0, 23, 59, 59, 999);
-      return { from: f.toISOString(), to: t.toISOString() };
+      return {
+        from: new Date(y, m - 1, 1, 0, 0, 0, 0).toISOString(),
+        to: new Date(y, m, 0, 23, 59, 59, 999).toISOString(),
+      };
     }
-    const f = start(this.from());
-    const t = end(this.to());
-    if (!f || !t) return null;
-    return { from: f.toISOString(), to: t.toISOString() };
+    const f = this.fromDate();
+    const t = this.toDate();
+    if (!f || !t || isNaN(f.getTime()) || isNaN(t.getTime())) return null;
+    return { from: startOfDay(f).toISOString(), to: endOfDay(t).toISOString() };
   }
 
   private load() {
@@ -249,4 +253,18 @@ export class Reports {
 function monthInput(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+}
+
+/** Build the last `count` months (newest first) for the month dropdown. */
+function buildMonthOptions(count: number): { value: string; label: string }[] {
+  const now = new Date();
+  const out: { value: string; label: string }[] = [];
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    out.push({
+      value: monthInput(d),
+      label: d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
+    });
+  }
+  return out;
 }

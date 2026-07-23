@@ -150,6 +150,25 @@ body {
   border-radius: var(--tl-radius) !important;
 }
 
+// Align the leading icon with the text in dialog titles.
+// Material's ::before spacer breaks flex alignment, so it is removed.
+.mat-mdc-dialog-title {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.mat-mdc-dialog-title::before {
+  display: none !important;
+}
+.mat-mdc-dialog-title .mat-icon {
+  margin: 0;
+  width: 26px;
+  height: 26px;
+  font-size: 26px;
+  line-height: 26px;
+  flex-shrink: 0;
+}
+
 // Align icon + text inside button-toggles (e.g. Daily/Monthly/Custom)
 .mat-button-toggle-label-content {
   display: inline-flex !important;

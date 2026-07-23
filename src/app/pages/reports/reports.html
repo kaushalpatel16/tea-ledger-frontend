@@ -21,21 +21,52 @@
       @if (mode() === 'daily') {
         <mat-form-field appearance="outline">
           <mat-label>Day</mat-label>
-          <input matInput type="date" [ngModel]="from()" (ngModelChange)="from.set($event)" />
+          <input
+            matInput
+            [matDatepicker]="dayPicker"
+            [ngModel]="day()"
+            (ngModelChange)="day.set($event)"
+            readonly
+            (click)="dayPicker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="dayPicker" />
+          <mat-datepicker #dayPicker />
         </mat-form-field>
       } @else if (mode() === 'monthly') {
         <mat-form-field appearance="outline">
           <mat-label>Month</mat-label>
-          <input matInput type="month" [ngModel]="month()" (ngModelChange)="month.set($event)" />
+          <mat-select [ngModel]="month()" (ngModelChange)="month.set($event)">
+            @for (m of monthOptions; track m.value) {
+              <mat-option [value]="m.value">{{ m.label }}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
       } @else {
         <mat-form-field appearance="outline">
           <mat-label>From</mat-label>
-          <input matInput type="date" [ngModel]="from()" (ngModelChange)="from.set($event)" />
+          <input
+            matInput
+            [matDatepicker]="fromPicker"
+            [ngModel]="fromDate()"
+            (ngModelChange)="fromDate.set($event)"
+            readonly
+            (click)="fromPicker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+          <mat-datepicker #fromPicker />
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>To</mat-label>
-          <input matInput type="date" [ngModel]="to()" (ngModelChange)="to.set($event)" />
+          <input
+            matInput
+            [matDatepicker]="toPicker"
+            [ngModel]="toDate()"
+            (ngModelChange)="toDate.set($event)"
+            readonly
+            (click)="toPicker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+          <mat-datepicker #toPicker />
         </mat-form-field>
       }
     </div>
