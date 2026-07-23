@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ThemeService } from '../services/theme.service';
 import { UiService } from '../services/ui.service';
 import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
+import { Contact } from '../models';
 
 interface NavItem {
   path: string;
@@ -33,7 +35,9 @@ export class Shell {
   private theme = inject(ThemeService);
   private ui = inject(UiService);
   private auth = inject(AuthService);
+  private api = inject(ApiService);
 
+  contacts = signal<Contact[]>([]);
   isDark = this.theme.isDark;
   user = this.auth.currentUser;
   isAdmin = this.auth.isAdmin;
@@ -61,6 +65,17 @@ export class Shell {
       .join('')
       .toUpperCase();
   });
+
+  constructor() {
+    // Keep the quick-contact menu in sync with Settings changes.
+    effect(() => {
+      this.api.version();
+      this.api.getContacts().subscribe({
+        next: (list) => this.contacts.set(list),
+        error: () => this.contacts.set([]),
+      });
+    });
+  }
 
   toggleTheme() {
     this.theme.toggle();

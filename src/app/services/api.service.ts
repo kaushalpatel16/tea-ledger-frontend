@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import {
+  Contact,
   DashboardData,
   Payment,
   PaymentMethod,
@@ -24,6 +25,11 @@ export interface PaymentInput {
   paymentMethod: PaymentMethod;
   date: string;
   notes?: string;
+}
+
+export interface ContactInput {
+  name: string;
+  phone: string;
 }
 
 export interface UserInput {
@@ -84,6 +90,22 @@ export class ApiService {
   deletePayment(id: string): Observable<{ success: boolean }> {
     return this.http
       .delete<{ success: boolean }>(`${BASE}/payments/${id}`)
+      .pipe(tap(() => this.bump()));
+  }
+
+  // ---- Contacts (phone book) ----
+  getContacts(): Observable<Contact[]> {
+    return this.http.get<Contact[]>(`${BASE}/contacts`);
+  }
+  createContact(body: ContactInput): Observable<Contact> {
+    return this.http.post<Contact>(`${BASE}/contacts`, body).pipe(tap(() => this.bump()));
+  }
+  updateContact(id: string, body: ContactInput): Observable<Contact> {
+    return this.http.put<Contact>(`${BASE}/contacts/${id}`, body).pipe(tap(() => this.bump()));
+  }
+  deleteContact(id: string): Observable<{ success: boolean }> {
+    return this.http
+      .delete<{ success: boolean }>(`${BASE}/contacts/${id}`)
       .pipe(tap(() => this.bump()));
   }
 

@@ -70,3 +70,71 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Contacts ---- */
+.contacts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.contact-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--tl-surface-2);
+  border: 1px solid var(--tl-border);
+  border-radius: 12px;
+}
+
+.ci-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--tl-accent) 16%, transparent);
+  color: var(--tl-accent-strong);
+}
+
+.ci-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ci-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ci-phone {
+  font-size: 0.85rem;
+  color: var(--tl-text-muted);
+  text-decoration: none;
+}
+
+.ci-phone:hover {
+  color: var(--tl-accent-strong);
+  text-decoration: underline;
+}
+
+.ci-actions {
+  display: flex;
+  flex-shrink: 0;
+}

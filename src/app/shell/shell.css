@@ -124,6 +124,32 @@
   padding: 12px 16px 10px;
   border-bottom: 1px solid var(--tl-border);
 }
+.menu-heading {
+  padding: 10px 16px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tl-text-muted);
+}
+.menu-empty {
+  padding: 6px 16px 12px;
+  font-size: 0.85rem;
+  color: var(--tl-text-muted);
+  max-width: 240px;
+}
+.contact-line {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.contact-name {
+  font-weight: 600;
+}
+.contact-phone {
+  font-size: 0.78rem;
+  color: var(--tl-text-muted);
+}
 .menu-name {
   font-weight: 600;
 }

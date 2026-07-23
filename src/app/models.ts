@@ -18,6 +18,14 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Transaction {
   id: string;
   datetime: string;

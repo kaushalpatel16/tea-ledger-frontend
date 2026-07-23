@@ -54,6 +54,45 @@
     </div>
   </section>
 
+  <!-- Contacts -->
+  <section class="tl-card block">
+    <div class="contacts-head">
+      <h2 class="tl-section-title" style="margin:0">
+        <mat-icon>call</mat-icon> Contacts
+      </h2>
+      <button mat-flat-button color="primary" (click)="addContact()">
+        <mat-icon>add</mat-icon> Add Contact
+      </button>
+    </div>
+    <p class="tl-muted note">
+      These appear in the phone menu at the top of the app for quick dialling.
+    </p>
+
+    @if (contacts().length) {
+      <ul class="contact-list">
+        @for (c of contacts(); track c.id) {
+          <li class="contact-item">
+            <div class="ci-avatar"><mat-icon>person</mat-icon></div>
+            <div class="ci-main">
+              <div class="ci-name">{{ c.name }}</div>
+              <a class="ci-phone" [href]="'tel:' + c.phone">{{ c.phone }}</a>
+            </div>
+            <div class="ci-actions">
+              <button mat-icon-button matTooltip="Edit" (click)="editContact(c)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" (click)="removeContact(c)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">No contacts yet. Add one to see it in the phone menu.</p>
+    }
+  </section>
+
   <!-- About -->
   <section class="tl-card block">
     <h2 class="tl-section-title"><mat-icon>local_cafe</mat-icon> About Tea Mitra</h2>

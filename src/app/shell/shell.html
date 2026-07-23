@@ -24,6 +24,36 @@
       <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     </button>
 
+    <button
+      mat-icon-button
+      class="theme-btn"
+      [matMenuTriggerFor]="phoneMenu"
+      matTooltip="Contacts"
+      aria-label="Contacts"
+    >
+      <mat-icon>call</mat-icon>
+    </button>
+    <mat-menu #phoneMenu="matMenu" class="phone-menu">
+      <div class="menu-heading" (click)="$event.stopPropagation()">Contacts</div>
+      @for (c of contacts(); track c.id) {
+        <a mat-menu-item [href]="'tel:' + c.phone">
+          <mat-icon>call</mat-icon>
+          <span class="contact-line">
+            <span class="contact-name">{{ c.name }}</span>
+            <span class="contact-phone">{{ c.phone }}</span>
+          </span>
+        </a>
+      } @empty {
+        <div class="menu-empty" (click)="$event.stopPropagation()">
+          No contacts yet — add them in Settings.
+        </div>
+      }
+      <a mat-menu-item routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Manage contacts</span>
+      </a>
+    </mat-menu>
+
     <button type="button" class="user-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
       <span class="user-avatar">{{ initials() }}</span>
       <span class="user-name">{{ user()?.name }}</span>

@@ -7,7 +7,8 @@ import { EntryDialog, EntryDialogData } from '../dialogs/entry-dialog';
 import { PaymentDialog } from '../dialogs/payment-dialog';
 import { ConfirmDialog, ConfirmData } from '../dialogs/confirm-dialog';
 import { ChangePasswordDialog } from '../dialogs/change-password-dialog';
-import { Payment, Transaction } from '../models';
+import { ContactDialog } from '../dialogs/contact-dialog';
+import { Contact, Payment, Transaction } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
@@ -67,6 +68,19 @@ export class UiService {
     });
     const result = await firstValueFrom(ref.afterClosed());
     if (result === 'changed') this.toast('Password updated');
+    return result ?? null;
+  }
+
+  async openContact(contact?: Contact): Promise<'created' | 'updated' | null> {
+    const ref = this.dialog.open(ContactDialog, {
+      width: '440px',
+      maxWidth: '94vw',
+      autoFocus: 'input',
+      data: { contact },
+    });
+    const result = await firstValueFrom(ref.afterClosed());
+    if (result === 'created') this.toast('Contact added');
+    if (result === 'updated') this.toast('Contact updated');
     return result ?? null;
   }
 
