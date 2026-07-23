@@ -26,6 +26,18 @@
   color: var(--tl-text);
   font-weight: 700;
   font-size: 1.15rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Keep the theme / contacts / account controls pinned to the right at every
+   width — on narrow screens the nav (which used to push them over) is hidden. */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 .brand-logo {
   font-size: 1.5rem;

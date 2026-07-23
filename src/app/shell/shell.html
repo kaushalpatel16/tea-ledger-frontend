@@ -15,25 +15,26 @@
       }
     </nav>
 
-    <button
-      mat-icon-button
-      class="theme-btn"
-      (click)="toggleTheme()"
-      [matTooltip]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-    >
-      <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
+    <div class="topbar-actions">
+      <button
+        mat-icon-button
+        class="theme-btn"
+        (click)="toggleTheme()"
+        [matTooltip]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
 
-    <button
-      mat-icon-button
-      class="theme-btn"
-      [matMenuTriggerFor]="phoneMenu"
-      matTooltip="Contacts"
-      aria-label="Contacts"
-    >
-      <mat-icon>call</mat-icon>
-    </button>
-    <mat-menu #phoneMenu="matMenu" class="phone-menu">
+      <button
+        mat-icon-button
+        class="theme-btn"
+        [matMenuTriggerFor]="phoneMenu"
+        matTooltip="Contacts"
+        aria-label="Contacts"
+      >
+        <mat-icon>call</mat-icon>
+      </button>
+      <mat-menu #phoneMenu="matMenu" class="phone-menu">
       <div class="menu-heading" (click)="$event.stopPropagation()">Contacts</div>
       @for (c of contacts(); track c.id) {
         <a mat-menu-item [href]="'tel:' + c.phone">
@@ -54,11 +55,11 @@
       </a>
     </mat-menu>
 
-    <button type="button" class="user-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
-      <span class="user-avatar">{{ initials() }}</span>
-      <span class="user-name">{{ user()?.name }}</span>
-      <mat-icon class="user-caret">expand_more</mat-icon>
-    </button>
+      <button type="button" class="user-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
+        <span class="user-avatar">{{ initials() }}</span>
+        <span class="user-name">{{ user()?.name }}</span>
+        <mat-icon class="user-caret">expand_more</mat-icon>
+      </button>
     <mat-menu #userMenu="matMenu">
       <div class="menu-user" (click)="$event.stopPropagation()">
         <div class="menu-name">{{ user()?.name }}</div>
@@ -71,11 +72,12 @@
           <span>Change my password</span>
         </button>
       }
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
   </header>
 
   <!-- Page content -->
