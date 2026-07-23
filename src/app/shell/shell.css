@@ -111,6 +111,14 @@
 }
 .user-caret {
   color: var(--tl-text-muted);
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .menu-user {
   padding: 12px 16px 10px;

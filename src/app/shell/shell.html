@@ -27,7 +27,7 @@
     <button type="button" class="user-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
       <span class="user-avatar">{{ initials() }}</span>
       <span class="user-name">{{ user()?.name }}</span>
-      <mat-icon class="user-caret">arrow_drop_down</mat-icon>
+      <mat-icon class="user-caret">expand_more</mat-icon>
     </button>
     <mat-menu #userMenu="matMenu">
       <div class="menu-user" (click)="$event.stopPropagation()">
