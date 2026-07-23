@@ -161,6 +161,13 @@ export class CalendarPage {
   }
 
   addForSelected() {
-    this.ui.openEntry();
+    // Pre-select the day the user picked in the calendar (time defaults to now).
+    const key = this.selected();
+    if (!key) {
+      this.ui.openEntry();
+      return;
+    }
+    const [y, m, d] = key.split('-').map(Number);
+    this.ui.openEntry(undefined, new Date(y, m - 1, d));
   }
 }

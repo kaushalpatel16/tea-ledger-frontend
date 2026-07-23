@@ -24,14 +24,21 @@ export class UiService {
     });
   }
 
-  /** Open the Add/Edit entry dialog. Loads current settings for price prefill. */
-  async openEntry(transaction?: Transaction): Promise<'created' | 'updated' | null> {
+  /**
+   * Open the Add/Edit entry dialog. Loads current settings for price prefill.
+   * `defaultDate` pre-selects the day for a new entry (e.g. the day picked in
+   * the calendar); the time defaults to now.
+   */
+  async openEntry(
+    transaction?: Transaction,
+    defaultDate?: Date,
+  ): Promise<'created' | 'updated' | null> {
     const settings = await firstValueFrom(this.api.getSettings());
     const ref = this.dialog.open(EntryDialog, {
       width: '560px',
       maxWidth: '95vw',
       autoFocus: 'input',
-      data: { transaction, settings } as EntryDialogData,
+      data: { transaction, settings, defaultDate } as EntryDialogData,
     });
     const result = await firstValueFrom(ref.afterClosed());
     if (result === 'created') this.toast('Entry added');

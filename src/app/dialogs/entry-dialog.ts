@@ -31,6 +31,22 @@ function toSignalFromControl<T>(group: FormGroup, name: string, initial: T) {
 export interface EntryDialogData {
   transaction?: Transaction;
   settings: Settings;
+  /** Pre-selected day for a new entry (time defaults to now). */
+  defaultDate?: Date;
+}
+
+/** Combine a chosen day with the current time of day. */
+function dayWithCurrentTime(day: Date): Date {
+  const now = new Date();
+  return new Date(
+    day.getFullYear(),
+    day.getMonth(),
+    day.getDate(),
+    now.getHours(),
+    now.getMinutes(),
+    0,
+    0,
+  );
 }
 
 @Component({
@@ -178,7 +194,10 @@ export class EntryDialog {
     beverageType: ['tea' as 'tea' | 'coffee', Validators.required],
     quantity: [1, [Validators.required, Validators.min(0.01)]],
     unitPrice: [this.data.settings.teaPrice, [Validators.required, Validators.min(0)]],
-    when: [new Date() as Date, Validators.required],
+    when: [
+      (this.data.defaultDate ? dayWithCurrentTime(this.data.defaultDate) : new Date()) as Date,
+      Validators.required,
+    ],
     notes: [''],
   });
 
