@@ -11,7 +11,7 @@
         <mat-icon matIconPrefix>search</mat-icon>
         <input
           matInput
-          placeholder="Search notes, drink…"
+          placeholder="Search notes or drink..."
           [ngModel]="search()"
           (ngModelChange)="onSearch($event)"
         />
@@ -22,42 +22,56 @@
         }
       </mat-form-field>
 
-      <button mat-stroked-button (click)="clearFilters()">
+      <mat-form-field appearance="outline" class="filter-select" subscriptSizing="dynamic">
+        <mat-select [ngModel]="range()" (ngModelChange)="setRange($event)">
+          <mat-option value="all">All time</mat-option>
+          <mat-option value="today">Today</mat-option>
+          <mat-option value="week">This week</mat-option>
+          <mat-option value="month">This month</mat-option>
+          <mat-option value="custom">Custom range</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-select" subscriptSizing="dynamic">
+        <mat-select [ngModel]="beverage()" (ngModelChange)="setBeverage($event)">
+          <mat-option value="all">All drinks</mat-option>
+          <mat-option value="tea">Tea</mat-option>
+          <mat-option value="coffee">Coffee</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-stroked-button class="reset-btn" (click)="clearFilters()">
         <mat-icon>filter_alt_off</mat-icon> Reset
       </button>
-    </div>
-
-    <div class="filters">
-      <div class="filter-group">
-        <span class="filter-label">Time</span>
-        <mat-button-toggle-group [value]="range()" (change)="setRange($event)" hideSingleSelectionIndicator>
-          <mat-button-toggle value="all">All</mat-button-toggle>
-          <mat-button-toggle value="today">Today</mat-button-toggle>
-          <mat-button-toggle value="week">Week</mat-button-toggle>
-          <mat-button-toggle value="month">Month</mat-button-toggle>
-          <mat-button-toggle value="custom">Custom</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-
-      <div class="filter-group">
-        <span class="filter-label">Drink</span>
-        <mat-button-toggle-group [value]="beverage()" (change)="setBeverage($event)" hideSingleSelectionIndicator>
-          <mat-button-toggle value="all">All</mat-button-toggle>
-          <mat-button-toggle value="tea">Tea</mat-button-toggle>
-          <mat-button-toggle value="coffee">Coffee</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
     </div>
 
     @if (range() === 'custom') {
       <div class="custom-range">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>From</mat-label>
-          <input matInput type="date" [ngModel]="fromDate()" (ngModelChange)="onFromDate($event)" />
+          <input
+            matInput
+            [matDatepicker]="fromPicker"
+            [ngModel]="fromDate()"
+            (ngModelChange)="onFromDate($event)"
+            readonly
+            (click)="fromPicker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+          <mat-datepicker #fromPicker />
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>To</mat-label>
-          <input matInput type="date" [ngModel]="toDate()" (ngModelChange)="onToDate($event)" />
+          <input
+            matInput
+            [matDatepicker]="toPicker"
+            [ngModel]="toDate()"
+            (ngModelChange)="onToDate($event)"
+            readonly
+            (click)="toPicker.open()"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+          <mat-datepicker #toPicker />
         </mat-form-field>
       </div>
     }

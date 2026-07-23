@@ -2,15 +2,16 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule, MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
 import { Transaction } from '../../models';
-import { fmtDateTime, inr, toDateInput } from '../../util/format';
+import { fmtDateTime, inr } from '../../util/format';
 
 type RangeKey = 'all' | 'today' | 'week' | 'month' | 'custom';
 type BeverageKey = 'all' | 'tea' | 'coffee';
@@ -23,9 +24,10 @@ type SortDir = 'asc' | 'desc';
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatButtonToggleModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
     MatPaginatorModule,
     MatTooltipModule,
   ],
@@ -45,8 +47,8 @@ export class Entries {
   // Filters
   search = signal('');
   range = signal<RangeKey>('all');
-  fromDate = signal('');
-  toDate = signal('');
+  fromDate = signal<Date | null>(null);
+  toDate = signal<Date | null>(null);
   beverage = signal<BeverageKey>('all');
 
   // Sorting
@@ -148,8 +150,12 @@ export class Entries {
     // custom
     const f = this.fromDate();
     const t = this.toDate();
-    const from = f ? new Date(f + 'T00:00:00').getTime() : null;
-    const to = t ? new Date(t + 'T23:59:59.999').getTime() : null;
+    const from = f
+      ? new Date(f.getFullYear(), f.getMonth(), f.getDate(), 0, 0, 0, 0).getTime()
+      : null;
+    const to = t
+      ? new Date(t.getFullYear(), t.getMonth(), t.getDate(), 23, 59, 59, 999).getTime()
+      : null;
     return { from, to };
   }
 
@@ -161,25 +167,25 @@ export class Entries {
     this.search.set(v);
     this.resetPage();
   }
-  setRange(e: MatButtonToggleChange) {
-    this.range.set(e.value as RangeKey);
-    if (e.value === 'custom' && !this.fromDate() && !this.toDate()) {
+  setRange(value: RangeKey) {
+    this.range.set(value);
+    // Seed a sensible custom range (month-to-date) the first time it's chosen.
+    if (value === 'custom' && !this.fromDate() && !this.toDate()) {
       const now = new Date();
-      const first = new Date(now.getFullYear(), now.getMonth(), 1);
-      this.fromDate.set(toDateInput(first));
-      this.toDate.set(toDateInput(now));
+      this.fromDate.set(new Date(now.getFullYear(), now.getMonth(), 1));
+      this.toDate.set(now);
     }
     this.resetPage();
   }
-  setBeverage(e: MatButtonToggleChange) {
-    this.beverage.set(e.value as BeverageKey);
+  setBeverage(value: BeverageKey) {
+    this.beverage.set(value);
     this.resetPage();
   }
-  onFromDate(v: string) {
+  onFromDate(v: Date | null) {
     this.fromDate.set(v);
     this.resetPage();
   }
-  onToDate(v: string) {
+  onToDate(v: Date | null) {
     this.toDate.set(v);
     this.resetPage();
   }
@@ -188,8 +194,8 @@ export class Entries {
     this.search.set('');
     this.range.set('all');
     this.beverage.set('all');
-    this.fromDate.set('');
-    this.toDate.set('');
+    this.fromDate.set(null);
+    this.toDate.set(null);
     this.resetPage();
   }
 
