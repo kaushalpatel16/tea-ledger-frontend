@@ -30,7 +30,7 @@
 }
 
 .summary-value.is-paid {
-  color: var(--tl-positive, #16a34a);
+  color: var(--tl-positive, #2563eb);
 }
 
 .summary-value.is-pending {
@@ -58,9 +58,10 @@
   white-space: nowrap;
 }
 
+/* Cash is cyan rather than the brand blue so it stays distinct from UPI below. */
 .method-cash {
-  background: rgba(22, 163, 74, 0.14);
-  color: #16a34a;
+  background: rgba(8, 145, 178, 0.14);
+  color: #0891b2;
 }
 
 .method-upi {

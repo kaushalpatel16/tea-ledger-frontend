@@ -103,7 +103,7 @@ export class Dashboard {
   });
 
   // ---- Charts ----
-  private tea = '#22a06b';
+  private tea = '#3b82f6';
   private coffee = '#b07a4a';
 
   pieData = computed<ChartConfiguration<'doughnut'>['data']>(() => {
@@ -145,7 +145,7 @@ export class Dashboard {
           data: daily.map((x) => x.amount),
           label: 'Daily expense',
           borderColor: this.tea,
-          backgroundColor: 'rgba(34,160,107,0.15)',
+          backgroundColor: 'rgba(59,130,246,0.15)',
           fill: true,
           tension: 0.35,
           pointRadius: 0,

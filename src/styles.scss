@@ -1,13 +1,13 @@
 @use '@angular/material' as mat;
 
-// ---- Angular Material theme (green accent, Material-inspired) ----
+// ---- Angular Material theme (blue accent, Material-inspired) ----
 html {
   color-scheme: light;
   @include mat.theme(
     (
       color: (
-        primary: mat.$green-palette,
-        tertiary: mat.$spring-green-palette,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
       ),
       typography: (
         plain-family: 'Inter, system-ui, sans-serif',
@@ -17,40 +17,41 @@ html {
     )
   );
 
-  // App-level design tokens (soft white / light-gray / green accent).
-  --tl-accent: #22a06b;
-  --tl-accent-strong: #17825a;
-  --tl-tea: #4caf7d;
+  // App-level design tokens (soft white / light-gray / blue accent).
+  --tl-accent: #2563eb;
+  --tl-accent-strong: #1d4ed8;
+  --tl-tea: #3b82f6;
   --tl-coffee: #b07a4a;
   --tl-radius: 16px;
   --tl-gap: 16px;
 
   // Light surfaces.
-  --tl-bg: #f4f6f5;
+  --tl-bg: #f4f6f8;
   --tl-surface: #ffffff;
-  --tl-surface-2: #f8faf9;
-  --tl-border: #e6eae8;
-  --tl-text: #1c2420;
-  --tl-text-muted: #6b7a73;
-  --tl-shadow: 0 1px 2px rgba(16, 40, 30, 0.04), 0 8px 24px rgba(16, 40, 30, 0.06);
-  --tl-positive: #22a06b;
+  --tl-surface-2: #f8fafc;
+  --tl-border: #e4e8ee;
+  --tl-text: #1c2230;
+  --tl-text-muted: #6b7585;
+  --tl-shadow: 0 1px 2px rgba(16, 28, 45, 0.04), 0 8px 24px rgba(16, 28, 45, 0.06);
+  --tl-positive: #2563eb;
   --tl-negative: #e5484d;
 }
 
 html.tl-dark {
   color-scheme: dark;
-  --tl-bg: #10161300;
-  --tl-bg: #0f1512;
-  --tl-surface: #171e1a;
-  --tl-surface-2: #1e2621;
-  --tl-border: #2a332d;
-  --tl-text: #e7ede9;
-  --tl-text-muted: #9aa8a1;
+  --tl-bg: #0f1319;
+  --tl-surface: #171b22;
+  --tl-surface-2: #1e232b;
+  --tl-border: #2a303a;
+  --tl-text: #e7eaef;
+  --tl-text-muted: #9aa3b2;
   --tl-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-  --tl-accent: #35c98c;
-  --tl-accent-strong: #58d6a2;
-  --tl-tea: #5fce97;
+  --tl-accent: #60a5fa;
+  --tl-accent-strong: #93c5fd;
+  --tl-tea: #7cb3fb;
   --tl-coffee: #cf9a6a;
+  // Lightened so positive amounts stay legible against the dark surface.
+  --tl-positive: #60a5fa;
 }
 
 * {
@@ -163,7 +164,7 @@ mat-icon.mat-icon,
   line-height: 1.4;
   white-space: nowrap;
 }
-.tl-chip--tea { background: rgba(76, 175, 125, 0.16); color: var(--tl-tea); }
+.tl-chip--tea { background: rgba(59, 130, 246, 0.16); color: var(--tl-tea); }
 .tl-chip--coffee { background: rgba(176, 122, 74, 0.18); color: var(--tl-coffee); }
 
 // Angular Material surface tweaks

@@ -171,7 +171,7 @@
   margin-bottom: 6px;
 }
 .tl-chip.role-admin {
-  background: rgba(34, 160, 107, 0.16);
+  background: rgba(37, 99, 235, 0.16);
   color: var(--tl-accent-strong);
   text-transform: capitalize;
 }
@@ -195,7 +195,7 @@
   width: auto !important;
   padding: 0 22px 0 18px !important;
   border-radius: 999px !important;
-  box-shadow: 0 10px 26px rgba(34, 160, 107, 0.4) !important;
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.4) !important;
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
