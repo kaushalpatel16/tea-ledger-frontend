@@ -1,9 +1,19 @@
 <div class="tl-page">
   <div class="tl-page-head">
     <h1>Dashboard</h1>
-    <a mat-stroked-button routerLink="/reports">
-      <mat-icon>insert_chart</mat-icon> View Reports
-    </a>
+    <div class="head-actions">
+      <mat-form-field appearance="outline" class="vendor-filter" subscriptSizing="dynamic">
+        <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)" aria-label="Vendor">
+          <mat-option value="all">All vendors</mat-option>
+          @for (v of vendorOptions(); track v.vendorId) {
+            <mat-option [value]="v.vendorId">{{ v.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <a mat-stroked-button routerLink="/reports">
+        <mat-icon>insert_chart</mat-icon> View Reports
+      </a>
+    </div>
   </div>
 
   @if (loading()) {
@@ -57,6 +67,44 @@
         </div>
       </section>
     }
+
+    <!-- Vendor-wise summary -->
+    <section class="tl-card vendor-summary">
+      <h2 class="tl-section-title">Vendor-wise summary</h2>
+      <div class="table-scroll">
+        <table class="tl-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th class="num">Orders</th>
+              <th class="num">Tea</th>
+              <th class="num">Coffee</th>
+              <th class="num">Billed</th>
+              <th class="num">Paid</th>
+              <th class="num">Pending</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of vendorRows(); track v.vendorId) {
+              <tr>
+                <td>
+                  <span class="vendor-name">{{ v.name }}</span>
+                  @if (v.mobile) { <span class="vendor-mobile">{{ v.mobile }}</span> }
+                </td>
+                <td class="num">{{ v.orders }}</td>
+                <td class="num">{{ v.totalTea }}</td>
+                <td class="num">{{ v.totalCoffee }}</td>
+                <td class="num">{{ inr(v.billed) }}</td>
+                <td class="num">{{ inr(v.paid) }}</td>
+                <td class="num" [class.is-pending-text]="v.pending > 0">{{ inr(v.pending) }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="7" class="empty">No vendors yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <!-- Quick stats -->
     <section class="tl-card quickstats">
@@ -112,6 +160,7 @@
           <thead>
             <tr>
               <th>Date &amp; Time</th>
+              <th>Vendor</th>
               <th>Drink</th>
               <th class="num">Qty</th>
               <th class="num">Total</th>
@@ -122,13 +171,14 @@
             @for (t of d.recent; track t.id) {
               <tr>
                 <td>{{ fmtDateTime(t.datetime) }}</td>
+                <td class="vendor-name">{{ t.vendor?.name || 'Unassigned' }}</td>
                 <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
                 <td class="num">{{ t.quantity }}</td>
                 <td class="num">{{ inr(t.total) }}</td>
                 <td class="notes-cell">{{ t.notes || '—' }}</td>
               </tr>
             } @empty {
-              <tr><td colspan="5" class="empty">No transactions yet — tap “Add Entry” to start.</td></tr>
+              <tr><td colspan="6" class="empty">No transactions yet — tap “Add Entry” to start.</td></tr>
             }
           </tbody>
         </table>

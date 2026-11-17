@@ -46,6 +46,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/users/users').then((m) => m.Users),
       },
       {
+        path: 'vendors',
+        title: 'Vendors · Tea Mitra',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./pages/vendors/vendors').then((m) => m.Vendors),
+      },
+      {
         path: 'settings',
         title: 'Settings · Tea Mitra',
         loadComponent: () => import('./pages/settings/settings').then((m) => m.SettingsPage),

@@ -1,4 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { startWith } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,11 +11,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { ApiService } from '../services/api.service';
-import { Payment } from '../models';
+import { Payment, Vendor } from '../models';
 import { inr } from '../util/format';
 
 export interface PaymentDialogData {
-  pending?: number;
+  /** Vendors to choose from — a payment always belongs to one. */
+  vendors: Vendor[];
+  /** Pending balance per vendor id, used for the hint and to prefill the amount. */
+  vendorPending?: Record<string, number>;
+  /** Pre-selected vendor for a new payment. */
+  vendorId?: string;
   payment?: Payment;
 }
 
@@ -40,6 +47,9 @@ export interface PaymentDialogData {
         grid-template-columns: 1fr 1fr;
         gap: 12px 16px;
       }
+      .full {
+        grid-column: 1 / -1;
+      }
       .hint {
         color: var(--tl-text-muted);
         font-size: 0.85rem;
@@ -63,10 +73,26 @@ export interface PaymentDialogData {
     </h2>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <mat-dialog-content>
-        @if (!isEdit && data.pending != null) {
-          <p class="hint">Current pending balance: <strong>{{ pendingLabel }}</strong></p>
-        }
         <div class="row">
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Vendor</mat-label>
+            <mat-icon matIconPrefix>storefront</mat-icon>
+            <mat-select formControlName="vendor" required>
+              @for (v of data.vendors; track v.id) {
+                <mat-option [value]="v.id">{{ v.name }} · {{ v.mobile }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.vendor.touched && form.controls.vendor.invalid) {
+              <mat-error>Please select a vendor</mat-error>
+            }
+          </mat-form-field>
+
+          @if (!isEdit && pendingLabel()) {
+            <p class="hint full">
+              Pending balance for this vendor: <strong>{{ pendingLabel() }}</strong>
+            </p>
+          }
+
           <mat-form-field appearance="outline">
             <mat-label>Amount Paid</mat-label>
             <span matTextPrefix>₹&nbsp;</span>
@@ -132,22 +158,47 @@ export class PaymentDialog {
 
   isEdit = !!this.data.payment;
   saving = signal(false);
-  pendingLabel = inr(this.data.pending ?? 0);
+
+  private initialVendor =
+    this.data.payment?.vendor?.id ??
+    this.data.vendorId ??
+    (this.data.vendors.length === 1 ? this.data.vendors[0].id : '');
 
   form = this.fb.nonNullable.group({
-    amount: [
-      this.data.pending && this.data.pending > 0 ? Number(this.data.pending.toFixed(2)) : 0,
-      [Validators.required, Validators.min(0.01)],
-    ],
+    vendor: [this.initialVendor as string, Validators.required],
+    amount: [this.pendingFor(this.initialVendor), [Validators.required, Validators.min(0.01)]],
     when: [new Date() as Date, Validators.required],
     paymentMethod: ['cash' as 'cash' | 'upi' | 'bank', Validators.required],
     notes: [''],
   });
 
+  private vendorValue = toSignal(
+    this.form.controls.vendor.valueChanges.pipe(startWith(this.form.controls.vendor.value)),
+    { initialValue: this.form.controls.vendor.value },
+  );
+
+  /** Pending balance of the selected vendor, formatted; empty when unknown. */
+  pendingLabel = computed(() => {
+    const id = this.vendorValue();
+    const pending = id ? this.data.vendorPending?.[id] : undefined;
+    return pending == null ? '' : inr(pending);
+  });
+
+  private pendingFor(vendorId: string): number {
+    const pending = vendorId ? this.data.vendorPending?.[vendorId] : undefined;
+    return pending && pending > 0 ? Number(pending.toFixed(2)) : 0;
+  }
+
   constructor() {
+    // New payments: prefill the amount with the chosen vendor's pending balance.
+    this.form.controls.vendor.valueChanges.subscribe((id) => {
+      if (!this.isEdit) this.form.controls.amount.setValue(this.pendingFor(id));
+    });
+
     const p = this.data.payment;
     if (p) {
       this.form.patchValue({
+        vendor: p.vendor?.id ?? '',
         amount: p.amount,
         when: new Date(p.date),
         paymentMethod: p.paymentMethod,
@@ -161,6 +212,7 @@ export class PaymentDialog {
     this.saving.set(true);
     const v = this.form.getRawValue();
     const payload = {
+      vendor: v.vendor,
       amount: Number(v.amount),
       paymentMethod: v.paymentMethod,
       date: v.when.toISOString(),

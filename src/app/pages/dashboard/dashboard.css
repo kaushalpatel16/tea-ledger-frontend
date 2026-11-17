@@ -214,3 +214,34 @@
     grid-template-columns: 1fr;
   }
 }
+
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vendor-filter {
+  min-width: 180px;
+}
+
+.vendor-summary {
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.vendor-name {
+  font-weight: 600;
+}
+
+.vendor-mobile {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--tl-text-muted);
+}
+
+.is-pending-text {
+  color: var(--tl-negative, #dc2626);
+  font-weight: 600;
+}

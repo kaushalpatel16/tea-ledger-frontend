@@ -8,13 +8,17 @@ import { PaymentDialog } from '../dialogs/payment-dialog';
 import { ConfirmDialog, ConfirmData } from '../dialogs/confirm-dialog';
 import { ChangePasswordDialog } from '../dialogs/change-password-dialog';
 import { ContactDialog } from '../dialogs/contact-dialog';
-import { Contact, Payment, Transaction } from '../models';
+import { VendorDialog } from '../dialogs/vendor-dialog';
+import { PaymentDialogData } from '../dialogs/payment-dialog';
+import { Contact, Payment, Transaction, Vendor } from '../models';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
   private dialog = inject(MatDialog);
   private snack = inject(MatSnackBar);
   private api = inject(ApiService);
+  private auth = inject(AuthService);
 
   toast(message: string, icon = '✓') {
     this.snack.open(`${icon}  ${message}`, '', {
@@ -34,12 +38,17 @@ export class UiService {
     transaction?: Transaction,
     defaultDate?: Date,
   ): Promise<'created' | 'updated' | null> {
-    const settings = await firstValueFrom(this.api.getSettings());
+    const [settings, vendors] = await Promise.all([
+      firstValueFrom(this.api.getSettings()),
+      firstValueFrom(this.api.getVendors()),
+    ]);
+    // Entries can't exist without a vendor, so block creation until one has been added.
+    if (!transaction && !this.ensureVendors(vendors)) return null;
     const ref = this.dialog.open(EntryDialog, {
       width: '560px',
       maxWidth: '95vw',
       autoFocus: 'input',
-      data: { transaction, settings, defaultDate } as EntryDialogData,
+      data: { transaction, settings, defaultDate, vendors } as EntryDialogData,
     });
     const result = await firstValueFrom(ref.afterClosed());
     if (result === 'created') this.toast('Entry added');
@@ -47,17 +56,46 @@ export class UiService {
     return result ?? null;
   }
 
-  async openPayment(pending?: number, payment?: Payment): Promise<'created' | 'updated' | null> {
+  async openPayment(
+    opts: { vendorPending?: Record<string, number>; vendorId?: string; payment?: Payment } = {},
+  ): Promise<'created' | 'updated' | null> {
+    const vendors = await firstValueFrom(this.api.getVendors());
+    if (!opts.payment && !this.ensureVendors(vendors)) return null;
     const ref = this.dialog.open(PaymentDialog, {
       width: '520px',
       maxWidth: '95vw',
       autoFocus: 'input',
-      data: { pending, payment },
+      data: { ...opts, vendors } as PaymentDialogData,
     });
     const result = await firstValueFrom(ref.afterClosed());
     if (result === 'created') this.toast('Payment recorded');
     if (result === 'updated') this.toast('Payment updated');
     return result ?? null;
+  }
+
+  async openVendor(vendor?: Vendor): Promise<'created' | 'updated' | null> {
+    const ref = this.dialog.open(VendorDialog, {
+      width: '440px',
+      maxWidth: '94vw',
+      autoFocus: 'input',
+      data: { vendor },
+    });
+    const result = await firstValueFrom(ref.afterClosed());
+    if (result === 'created') this.toast('Vendor added');
+    if (result === 'updated') this.toast('Vendor updated');
+    return result ?? null;
+  }
+
+  /** True if at least one vendor exists; otherwise tells the user how to add one. */
+  private ensureVendors(vendors: Vendor[]): boolean {
+    if (vendors.length > 0) return true;
+    this.toast(
+      this.auth.isAdmin()
+        ? 'Add a vendor first (Vendors page) before creating entries'
+        : 'No vendors yet — ask an admin to add one',
+      '⚠',
+    );
+    return false;
   }
 
   async openChangePassword(): Promise<'changed' | null> {

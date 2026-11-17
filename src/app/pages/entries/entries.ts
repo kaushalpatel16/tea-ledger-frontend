@@ -10,7 +10,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
-import { Transaction } from '../../models';
+import { Transaction, Vendor } from '../../models';
 import { fmtDateTime, inr } from '../../util/format';
 
 type RangeKey = 'all' | 'today' | 'week' | 'month' | 'custom';
@@ -42,6 +42,7 @@ export class Entries {
   fmtDateTime = fmtDateTime;
 
   transactions = signal<Transaction[]>([]);
+  vendors = signal<Vendor[]>([]);
   loading = signal(true);
 
   // Filters
@@ -50,6 +51,8 @@ export class Entries {
   fromDate = signal<Date | null>(null);
   toDate = signal<Date | null>(null);
   beverage = signal<BeverageKey>('all');
+  /** 'all' or a vendor id. */
+  vendor = signal<string>('all');
 
   // Sorting
   sortKey = signal<SortKey>('datetime');
@@ -67,6 +70,7 @@ export class Entries {
   }
 
   private load() {
+    this.api.getVendors().subscribe({ next: (list) => this.vendors.set(list) });
     this.api.getTransactions().subscribe({
       next: (list) => {
         this.transactions.set(list);
@@ -81,10 +85,12 @@ export class Entries {
     const q = this.search().trim().toLowerCase();
     const range = this.range();
     const bev = this.beverage();
+    const vendor = this.vendor();
     const bounds = this.rangeBounds(range);
 
     return this.transactions().filter((t) => {
       if (bev !== 'all' && t.beverageType !== bev) return false;
+      if (vendor !== 'all' && t.vendor?.id !== vendor) return false;
 
       if (bounds) {
         const d = new Date(t.datetime).getTime();
@@ -93,7 +99,7 @@ export class Entries {
       }
 
       if (q) {
-        const hay = `${t.notes} ${t.beverageType}`.toLowerCase();
+        const hay = `${t.notes} ${t.beverageType} ${t.vendor?.name ?? ''}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -181,6 +187,10 @@ export class Entries {
     this.beverage.set(value);
     this.resetPage();
   }
+  setVendor(value: string) {
+    this.vendor.set(value);
+    this.resetPage();
+  }
   onFromDate(v: Date | null) {
     this.fromDate.set(v);
     this.resetPage();
@@ -194,6 +204,7 @@ export class Entries {
     this.search.set('');
     this.range.set('all');
     this.beverage.set('all');
+    this.vendor.set('all');
     this.fromDate.set(null);
     this.toDate.set(null);
     this.resetPage();

@@ -17,7 +17,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { ApiService } from '../services/api.service';
-import { Settings, Transaction } from '../models';
+import { Settings, Transaction, Vendor } from '../models';
 import { inr } from '../util/format';
 
 // Small helper: turn a form control into a signal that tracks its value.
@@ -31,6 +31,8 @@ function toSignalFromControl<T>(group: FormGroup, name: string, initial: T) {
 export interface EntryDialogData {
   transaction?: Transaction;
   settings: Settings;
+  /** Vendors to choose from — an entry always belongs to one. */
+  vendors: Vendor[];
   /** Pre-selected day for a new entry (time defaults to now). */
   defaultDate?: Date;
 }
@@ -108,6 +110,19 @@ function dayWithCurrentTime(day: Date): Date {
     <form [formGroup]="form" (ngSubmit)="submit()">
       <mat-dialog-content>
         <div class="grid">
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Vendor</mat-label>
+            <mat-icon matIconPrefix>storefront</mat-icon>
+            <mat-select formControlName="vendor" required>
+              @for (v of vendors(); track v.id) {
+                <mat-option [value]="v.id">{{ v.name }} · {{ v.mobile }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.vendor.touched && form.controls.vendor.invalid) {
+              <mat-error>Please select a vendor</mat-error>
+            }
+          </mat-form-field>
+
           <mat-form-field appearance="outline">
             <mat-label>Beverage</mat-label>
             <mat-select formControlName="beverageType">
@@ -190,7 +205,15 @@ export class EntryDialog {
   isEdit = !!this.data.transaction;
   saving = signal(false);
 
+  /** Vendor options; an edited legacy entry keeps its vendor even if somehow missing from the list. */
+  vendors = signal<Vendor[]>(this.data.vendors ?? []);
+
   form = this.fb.nonNullable.group({
+    // Mandatory. Auto-selected only when there is exactly one vendor to choose from.
+    vendor: [
+      (this.data.transaction?.vendor?.id ?? (this.data.vendors?.length === 1 ? this.data.vendors[0].id : '')) as string,
+      Validators.required,
+    ],
     beverageType: ['tea' as 'tea' | 'coffee', Validators.required],
     quantity: [1, [Validators.required, Validators.min(0.01)]],
     unitPrice: [this.data.settings.teaPrice, [Validators.required, Validators.min(0)]],
@@ -213,6 +236,7 @@ export class EntryDialog {
     const tx = this.data.transaction;
     if (tx) {
       this.form.patchValue({
+        vendor: tx.vendor?.id ?? '',
         beverageType: tx.beverageType,
         quantity: tx.quantity,
         unitPrice: tx.unitPrice,
@@ -223,11 +247,23 @@ export class EntryDialog {
 
     // Auto-fill unit price from settings when beverage changes (new entries only,
     // and only if the user hasn't manually diverged from a settings price).
-    this.form.controls.beverageType.valueChanges.subscribe((bev) => {
+    // The vendor's own price wins; vendors without one fall back to the Settings price.
+    // Both vendor and beverage changes refresh it (new entries only).
+    const refreshPrice = () => {
       if (this.isEdit) return;
-      const p = bev === 'coffee' ? this.data.settings.coffeePrice : this.data.settings.teaPrice;
-      this.form.controls.unitPrice.setValue(p);
-    });
+      this.form.controls.unitPrice.setValue(this.defaultPrice());
+    };
+    this.form.controls.beverageType.valueChanges.subscribe(refreshPrice);
+    this.form.controls.vendor.valueChanges.subscribe(refreshPrice);
+    refreshPrice();
+  }
+
+  /** Default unit price for the selected vendor + beverage. */
+  private defaultPrice(): number {
+    const { vendor, beverageType } = this.form.getRawValue();
+    const v = this.vendors().find((x) => x.id === vendor);
+    const own = beverageType === 'coffee' ? v?.coffeePrice : v?.teaPrice;
+    return own ?? (beverageType === 'coffee' ? this.data.settings.coffeePrice : this.data.settings.teaPrice);
   }
 
   submit() {
@@ -235,6 +271,7 @@ export class EntryDialog {
     this.saving.set(true);
     const v = this.form.getRawValue();
     const payload = {
+      vendor: v.vendor,
       beverageType: v.beverageType,
       quantity: Number(v.quantity),
       unitPrice: Number(v.unitPrice),

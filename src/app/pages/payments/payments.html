@@ -27,14 +27,79 @@
     </div>
   </div>
 
+  <!-- Vendor-wise balances -->
+  <div class="tl-card history-card vendor-card">
+    <h2 class="tl-section-title">Vendor-wise balance</h2>
+    <div class="table-scroll">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th class="num">Billed</th>
+            <th class="num">Paid</th>
+            <th class="num">Pending</th>
+            <th class="actions-col">Pay</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of vendors(); track v.vendorId) {
+            <tr>
+              <td>
+                <span class="vendor-name">{{ v.name }}</span>
+                @if (v.mobile) {
+                  <span class="vendor-mobile">{{ v.mobile }}</span>
+                }
+              </td>
+              <td class="num">{{ inr(v.billed) }}</td>
+              <td class="num">{{ inr(v.paid) }}</td>
+              <td class="num" [class.is-pending-text]="v.pending > 0">{{ inr(v.pending) }}</td>
+              <td class="actions-col">
+                @if (v.vendorId !== 'unassigned') {
+                  <button
+                    mat-stroked-button
+                    (click)="recordPayment(v.vendorId)"
+                    [attr.aria-label]="'Record payment for ' + v.name"
+                  >
+                    <mat-icon>payments</mat-icon> Pay
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty" colspan="5">
+                @if (loading()) {
+                  Loading…
+                } @else {
+                  No vendors yet. An admin can add them on the Vendors page.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="tl-card history-card">
-    <h2 class="tl-section-title">Payment history</h2>
+    <div class="history-head">
+      <h2 class="tl-section-title" style="margin:0">Payment history</h2>
+      <mat-form-field appearance="outline" class="vendor-filter" subscriptSizing="dynamic">
+        <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)" aria-label="Vendor">
+          <mat-option value="all">All vendors</mat-option>
+          @for (v of payableVendors(); track v.vendorId) {
+            <mat-option [value]="v.vendorId">{{ v.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div class="table-scroll">
       <table class="tl-table">
         <thead>
           <tr>
             <th>Date &amp; Time</th>
+            <th>Vendor</th>
             <th class="num">Amount</th>
             <th>Method</th>
             <th>Notes</th>
@@ -42,9 +107,10 @@
           </tr>
         </thead>
         <tbody>
-          @for (p of payments(); track p.id) {
+          @for (p of filteredPayments(); track p.id) {
             <tr>
               <td>{{ fmtDateTime(p.date) }}</td>
+              <td class="vendor-name">{{ p.vendor?.name || 'Unassigned' }}</td>
               <td class="num">{{ inr(p.amount) }}</td>
               <td>
                 <span class="method-chip method-{{ p.paymentMethod }}">
@@ -73,7 +139,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="empty" colspan="5">
+              <td class="empty" colspan="6">
                 @if (loading()) {
                   Loading payments…
                 } @else {

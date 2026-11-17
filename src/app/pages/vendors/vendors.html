@@ -1,0 +1,70 @@
+<div class="tl-page">
+  <div class="tl-page-head">
+    <h1>Vendors</h1>
+    <button mat-flat-button color="primary" (click)="add()">
+      <mat-icon>add</mat-icon>
+      Add Vendor
+    </button>
+  </div>
+
+  <div class="tl-card vendors-card">
+    <h2 class="tl-section-title">Tea &amp; coffee vendors</h2>
+    <p class="tl-muted note">
+      Every entry and payment must be assigned to a vendor, so add your vendors here first.
+    </p>
+
+    <div class="table-scroll">
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th class="num">Tea price</th>
+            <th class="num">Coffee price</th>
+            <th>Added</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of vendors(); track v.id) {
+            <tr>
+              <td class="name">{{ v.name }}</td>
+              <td><a class="mobile" [href]="'tel:' + v.mobile">{{ v.mobile }}</a></td>
+              <td class="num">{{ v.teaPrice == null ? '—' : inr(v.teaPrice) }}</td>
+              <td class="num">{{ v.coffeePrice == null ? '—' : inr(v.coffeePrice) }}</td>
+              <td>{{ fmtDate(v.createdAt) }}</td>
+              <td class="actions-col">
+                <button
+                  mat-icon-button
+                  matTooltip="Edit vendor"
+                  aria-label="Edit vendor"
+                  (click)="edit(v)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltip="Delete vendor"
+                  aria-label="Delete vendor"
+                  (click)="remove(v)"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty" colspan="6">
+                @if (loading()) {
+                  Loading vendors…
+                } @else {
+                  No vendors yet. Use “Add Vendor” to create one.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

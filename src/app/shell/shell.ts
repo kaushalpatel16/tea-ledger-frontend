@@ -49,6 +49,7 @@ export class Shell {
     { path: '/payments', label: 'Payments', icon: 'payments' },
     { path: '/reports', label: 'Reports', icon: 'bar_chart' },
     { path: '/calendar', label: 'Calendar', icon: 'calendar_month' },
+    { path: '/vendors', label: 'Vendors', icon: 'storefront', admin: true },
     { path: '/users', label: 'Users', icon: 'group', admin: true },
     { path: '/settings', label: 'Settings', icon: 'settings' },
   ];

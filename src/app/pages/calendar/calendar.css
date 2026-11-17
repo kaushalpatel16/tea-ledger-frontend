@@ -184,3 +184,8 @@
     font-size: 0.6rem;
   }
 }
+
+.pi-vendor {
+  color: var(--tl-text-muted);
+  font-size: 0.8rem;
+}

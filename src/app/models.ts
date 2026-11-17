@@ -27,8 +27,38 @@ export interface Contact {
   updatedAt: string;
 }
 
+/** Supplier of tea/coffee. Managed by admins. */
+export interface Vendor {
+  id: string;
+  name: string;
+  mobile: string;
+  /** Per-vendor unit prices; absent on vendors created before prices existed. */
+  teaPrice?: number | null;
+  coffeePrice?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Vendor reference embedded in entries/payments. `null` only for legacy records. */
+export type VendorRef = Pick<Vendor, 'id' | 'name' | 'mobile'>;
+
+/** Per-vendor totals shown on the dashboard, payments and reports. */
+export interface VendorSummary {
+  vendorId: string; // 'unassigned' groups records created before vendors existed
+  name: string;
+  mobile: string;
+  orders: number;
+  totalTea: number;
+  totalCoffee: number;
+  totalQuantity: number;
+  billed: number;
+  paid: number;
+  pending: number;
+}
+
 export interface Transaction {
   id: string;
+  vendor: VendorRef | null;
   datetime: string;
   beverageType: Beverage;
   quantity: number;
@@ -41,6 +71,7 @@ export interface Transaction {
 
 export interface Payment {
   id: string;
+  vendor: VendorRef | null;
   amount: number;
   paymentMethod: PaymentMethod;
   date: string;
@@ -85,6 +116,8 @@ export interface DashboardData {
     daily: { date: string; amount: number }[];
     monthly: { month: string; label: string; amount: number }[];
   };
+  vendors: VendorSummary[];
+  vendorFilter: string | null;
   recent: Transaction[];
 }
 
@@ -99,6 +132,8 @@ export interface ReportData {
   orders: number;
   paidAmount: number;
   pending: number;
+  vendors: VendorSummary[];
+  vendorFilter: string | null;
   transactions: Transaction[];
   payments: Payment[];
 }

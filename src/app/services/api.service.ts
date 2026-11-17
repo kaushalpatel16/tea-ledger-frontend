@@ -11,6 +11,7 @@ import {
   Settings,
   Transaction,
   User,
+  Vendor,
 } from '../models';
 import { environment } from '../../environments/environment';
 
@@ -18,9 +19,17 @@ const BASE = environment.apiBase;
 
 export type TransactionInput = Partial<
   Pick<Transaction, 'datetime' | 'beverageType' | 'quantity' | 'unitPrice' | 'notes'>
->;
+> & { vendor: string };
+
+export interface VendorInput {
+  name: string;
+  mobile: string;
+  teaPrice: number;
+  coffeePrice: number;
+}
 
 export interface PaymentInput {
+  vendor: string;
   amount: number;
   paymentMethod: PaymentMethod;
   date: string;
@@ -110,6 +119,22 @@ export class ApiService {
       .pipe(tap(() => this.bump()));
   }
 
+  // ---- Vendors (read: everyone, write: admin) ----
+  getVendors(): Observable<Vendor[]> {
+    return this.http.get<Vendor[]>(`${BASE}/vendors`);
+  }
+  createVendor(body: VendorInput): Observable<Vendor> {
+    return this.http.post<Vendor>(`${BASE}/vendors`, body).pipe(tap(() => this.bump()));
+  }
+  updateVendor(id: string, body: VendorInput): Observable<Vendor> {
+    return this.http.put<Vendor>(`${BASE}/vendors/${id}`, body).pipe(tap(() => this.bump()));
+  }
+  deleteVendor(id: string): Observable<{ success: boolean }> {
+    return this.http
+      .delete<{ success: boolean }>(`${BASE}/vendors/${id}`)
+      .pipe(tap(() => this.bump()));
+  }
+
   // ---- Users (admin) ----
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${BASE}/users`);
@@ -127,10 +152,13 @@ export class ApiService {
   }
 
   // ---- Analytics ----
-  getDashboard(): Observable<DashboardData> {
-    return this.http.get<DashboardData>(`${BASE}/dashboard`);
+  getDashboard(vendor?: string | null): Observable<DashboardData> {
+    const params: Record<string, string> = vendor ? { vendor } : {};
+    return this.http.get<DashboardData>(`${BASE}/dashboard`, { params });
   }
-  getReport(from: string, to: string): Observable<ReportData> {
-    return this.http.get<ReportData>(`${BASE}/reports`, { params: { from, to } });
+  getReport(from: string, to: string, vendor?: string | null): Observable<ReportData> {
+    const params: Record<string, string> = { from, to };
+    if (vendor) params['vendor'] = vendor;
+    return this.http.get<ReportData>(`${BASE}/reports`, { params });
   }
 }

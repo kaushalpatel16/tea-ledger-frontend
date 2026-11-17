@@ -1,0 +1,22 @@
+.vendors-card {
+  padding: 18px 20px;
+}
+
+.note {
+  margin: 0 0 14px;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.mobile {
+  color: var(--tl-accent, #2563eb);
+  text-decoration: none;
+}
+
+.actions-col {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}

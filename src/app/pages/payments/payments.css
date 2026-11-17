@@ -86,3 +86,39 @@
   width: 1%;
   white-space: nowrap;
 }
+
+.vendor-card {
+  margin-bottom: 20px;
+}
+
+.vendor-name {
+  font-weight: 600;
+}
+
+.vendor-mobile {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--tl-text-muted);
+}
+
+.is-pending-text {
+  color: var(--tl-negative, #dc2626);
+  font-weight: 600;
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.vendor-filter {
+  min-width: 190px;
+}
+
+.actions-col {
+  text-align: right;
+}

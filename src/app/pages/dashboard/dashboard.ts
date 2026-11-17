@@ -1,5 +1,8 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -11,7 +14,16 @@ import { fmtDate, fmtDateTime, inr } from '../../util/format';
 
 @Component({
   selector: 'tl-dashboard',
-  imports: [RouterLink, MatIconModule, MatButtonModule, MatProgressBarModule, BaseChartDirective],
+  imports: [
+    RouterLink,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    BaseChartDirective,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -20,6 +32,8 @@ export class Dashboard {
 
   data = signal<DashboardData | null>(null);
   loading = signal(true);
+  /** 'all' or a vendor id; scopes the cards, stats and charts. */
+  vendorFilter = signal<string>('all');
   inr = inr;
   fmtDate = fmtDate;
   fmtDateTime = fmtDateTime;
@@ -27,12 +41,12 @@ export class Dashboard {
   constructor() {
     effect(() => {
       this.api.version(); // track mutations → refetch
-      this.load();
+      this.load(this.vendorFilter());
     });
   }
 
-  private load() {
-    this.api.getDashboard().subscribe({
+  private load(vendor: string) {
+    this.api.getDashboard(vendor === 'all' ? null : vendor).subscribe({
       next: (d) => {
         this.data.set(d);
         this.loading.set(false);
@@ -40,6 +54,18 @@ export class Dashboard {
       error: () => this.loading.set(false),
     });
   }
+
+  /** Vendors available in the filter (the synthetic "Unassigned" bucket can't be selected). */
+  vendorOptions = computed(() =>
+    (this.data()?.vendors ?? []).filter((v) => v.vendorId !== 'unassigned'),
+  );
+
+  /** Vendor-wise totals; shows just the selected vendor when a filter is active. */
+  vendorRows = computed(() => {
+    const f = this.vendorFilter();
+    const all = this.data()?.vendors ?? [];
+    return f === 'all' ? all : all.filter((v) => v.vendorId === f);
+  });
 
   cards = computed(() => {
     const d = this.data();

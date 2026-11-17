@@ -17,6 +17,16 @@
       <mat-button-toggle value="custom"><mat-icon>date_range</mat-icon> Custom</mat-button-toggle>
     </mat-button-toggle-group>
 
+    <mat-form-field appearance="outline" class="vendor-select">
+      <mat-label>Vendor</mat-label>
+      <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)">
+        <mat-option value="all">All vendors</mat-option>
+        @for (v of vendorOptions(); track v.id) {
+          <mat-option [value]="v.id">{{ v.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
     <div class="date-inputs">
       @if (mode() === 'daily') {
         <mat-form-field appearance="outline">
@@ -85,6 +95,41 @@
       }
     </section>
 
+    <!-- Vendor-wise summary -->
+    <section class="tl-card detail">
+      <h2 class="tl-section-title">Vendor-wise summary</h2>
+      <div class="table-scroll">
+        <table class="tl-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th class="num">Orders</th>
+              <th class="num">Tea</th>
+              <th class="num">Coffee</th>
+              <th class="num">Billed</th>
+              <th class="num">Paid</th>
+              <th class="num">Pending</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of vendorRows(); track v.vendorId) {
+              <tr>
+                <td><strong>{{ v.name }}</strong></td>
+                <td class="num">{{ v.orders }}</td>
+                <td class="num">{{ v.totalTea }}</td>
+                <td class="num">{{ v.totalCoffee }}</td>
+                <td class="num">{{ inr(v.billed) }}</td>
+                <td class="num">{{ inr(v.paid) }}</td>
+                <td class="num">{{ inr(v.pending) }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="7" class="empty">No vendors yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Detail table -->
     <section class="tl-card detail">
       <h2 class="tl-section-title">Transactions <span class="tl-muted">({{ r.orders }})</span></h2>
@@ -93,6 +138,7 @@
           <thead>
             <tr>
               <th>Date &amp; Time</th>
+              <th>Vendor</th>
               <th>Drink</th>
               <th class="num">Qty</th>
               <th class="num">Unit Price</th>
@@ -104,6 +150,7 @@
             @for (t of r.transactions; track t.id) {
               <tr>
                 <td>{{ fmtDateTime(t.datetime) }}</td>
+                <td>{{ t.vendor?.name || 'Unassigned' }}</td>
                 <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
                 <td class="num">{{ t.quantity }}</td>
                 <td class="num">{{ inr(t.unitPrice) }}</td>
@@ -111,7 +158,7 @@
                 <td>{{ t.notes || '—' }}</td>
               </tr>
             } @empty {
-              <tr><td colspan="6" class="empty">No transactions in this range.</td></tr>
+              <tr><td colspan="7" class="empty">No transactions in this range.</td></tr>
             }
           </tbody>
         </table>

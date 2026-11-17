@@ -65,3 +65,12 @@
     align-items: stretch;
   }
 }
+
+.vendor-select {
+  margin-bottom: -1.25em;
+  min-width: 190px;
+}
+
+.detail + .detail {
+  margin-top: 16px;
+}

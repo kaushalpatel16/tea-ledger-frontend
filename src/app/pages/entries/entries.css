@@ -85,3 +85,8 @@ mat-paginator {
     min-width: 130px;
   }
 }
+
+.vendor-cell {
+  font-weight: 600;
+  white-space: nowrap;
+}

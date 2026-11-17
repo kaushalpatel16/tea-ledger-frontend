@@ -68,6 +68,7 @@
                   <span class="pi-time">{{ time(t.datetime) }}</span>
                   <span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span>
                   <span class="pi-qty">× {{ t.quantity }}</span>
+                  <span class="pi-vendor">{{ t.vendor?.name || 'Unassigned' }}</span>
                 </div>
                 <div class="pi-side">
                   <span class="pi-total">{{ inr(t.total) }}</span>

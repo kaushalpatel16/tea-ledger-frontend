@@ -12,7 +12,7 @@ import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
-import { ReportData } from '../../models';
+import { ReportData, Vendor } from '../../models';
 import { fmtDate, fmtDateTime, inr, toDateInput } from '../../util/format';
 
 type Mode = 'daily' | 'monthly' | 'custom';
@@ -52,13 +52,31 @@ export class Reports {
   /** Last 24 months, newest first, for the month dropdown. */
   readonly monthOptions = buildMonthOptions(24);
 
+  /** 'all' or a vendor id. */
+  vendorFilter = signal<string>('all');
+  vendorOptions = signal<Vendor[]>([]);
+
   report = signal<ReportData | null>(null);
   loading = signal(false);
+
+  /** Label of the vendor currently filtered on ('All vendors' otherwise). */
+  vendorLabel = computed(() => {
+    const id = this.vendorFilter();
+    return id === 'all' ? 'All vendors' : (this.vendorOptions().find((v) => v.id === id)?.name ?? '');
+  });
 
   rangeLabel = computed(() => {
     const r = this.report();
     if (!r) return '';
-    return `${fmtDate(r.range.from)} – ${fmtDate(r.range.to)}`;
+    return `${fmtDate(r.range.from)} – ${fmtDate(r.range.to)} · ${this.vendorLabel()}`;
+  });
+
+  /** Vendor-wise totals; just the selected vendor when filtered. */
+  vendorRows = computed(() => {
+    const r = this.report();
+    const f = this.vendorFilter();
+    const all = r?.vendors ?? [];
+    return f === 'all' ? all : all.filter((v) => v.vendorId === f);
   });
 
   tiles = computed(() => {
@@ -84,6 +102,7 @@ export class Reports {
       this.month();
       this.fromDate();
       this.toDate();
+      this.vendorFilter();
       this.api.version();
       this.load();
     });
@@ -118,7 +137,9 @@ export class Reports {
     const range = this.isoRange();
     if (!range) return;
     this.loading.set(true);
-    this.api.getReport(range.from, range.to).subscribe({
+    this.api.getVendors().subscribe({ next: (list) => this.vendorOptions.set(list) });
+    const vendor = this.vendorFilter();
+    this.api.getReport(range.from, range.to, vendor === 'all' ? null : vendor).subscribe({
       next: (r) => {
         this.report.set(r);
         this.loading.set(false);
@@ -136,6 +157,7 @@ export class Reports {
     const r = this.report();
     return (r?.transactions ?? []).map((t) => ({
       Date: fmtDateTime(t.datetime),
+      Vendor: t.vendor?.name || 'Unassigned',
       Drink: t.beverageType,
       Quantity: t.quantity,
       'Unit Price': t.unitPrice,
@@ -167,13 +189,19 @@ export class Reports {
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const headers = Object.keys(rows[0] ?? {
-      Date: '', Drink: '', Quantity: '', 'Unit Price': '', Total: '', Notes: '',
+      Date: '', Vendor: '', Drink: '', Quantity: '', 'Unit Price': '', Total: '', Notes: '',
     });
     const lines: string[] = [];
     lines.push(`Tea Mitra Report,${this.rangeLabel()}`);
     lines.push('');
     lines.push('Summary');
     for (const [k, v] of this.summaryRows()) lines.push(`${esc(k)},${esc(v)}`);
+    lines.push('');
+    lines.push('Vendor-wise summary');
+    lines.push('Vendor,Mobile,Orders,Billed,Paid,Pending');
+    for (const v of this.vendorRows()) {
+      lines.push([v.name, v.mobile, v.orders, v.billed, v.paid, v.pending].map(esc).join(','));
+    }
     lines.push('');
     lines.push('Transactions');
     lines.push(headers.map(esc).join(','));
@@ -191,6 +219,17 @@ export class Reports {
       ...this.summaryRows(),
     ]);
     XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+    const vendorWs = XLSX.utils.json_to_sheet(
+      this.vendorRows().map((v) => ({
+        Vendor: v.name,
+        Mobile: v.mobile,
+        Orders: v.orders,
+        Billed: v.billed,
+        Paid: v.paid,
+        Pending: v.pending,
+      })),
+    );
+    XLSX.utils.book_append_sheet(wb, vendorWs, 'Vendors');
     const txWs = XLSX.utils.json_to_sheet(this.rows());
     XLSX.utils.book_append_sheet(wb, txWs, 'Transactions');
     XLSX.writeFile(wb, `${this.baseName()}.xlsx`);
@@ -220,12 +259,27 @@ export class Reports {
       styles: { fontSize: 9 },
     });
 
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 8,
+      head: [['Vendor', 'Orders', 'Billed', 'Paid', 'Pending']],
+      body: this.vendorRows().map((v) => [
+        v.name,
+        v.orders,
+        inr(v.billed),
+        inr(v.paid),
+        inr(v.pending),
+      ]),
+      theme: 'grid',
+      headStyles: { fillColor: [34, 160, 107] },
+      styles: { fontSize: 9 },
+    });
+
     const rows = this.rows();
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 8,
-      head: [['Date', 'Drink', 'Qty', 'Unit', 'Total', 'Notes']],
+      head: [['Date', 'Vendor', 'Drink', 'Qty', 'Unit', 'Total', 'Notes']],
       body: rows.map((row) => [
-        row.Date, row.Drink, row.Quantity, row['Unit Price'], row.Total, row.Notes,
+        row.Date, row.Vendor, row.Drink, row.Quantity, row['Unit Price'], row.Total, row.Notes,
       ]),
       theme: 'striped',
       headStyles: { fillColor: [34, 160, 107] },

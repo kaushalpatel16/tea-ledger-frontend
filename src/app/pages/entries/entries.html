@@ -11,7 +11,7 @@
         <mat-icon matIconPrefix>search</mat-icon>
         <input
           matInput
-          placeholder="Search notes or drink..."
+          placeholder="Search vendor, notes or drink..."
           [ngModel]="search()"
           (ngModelChange)="onSearch($event)"
         />
@@ -29,6 +29,15 @@
           <mat-option value="week">This week</mat-option>
           <mat-option value="month">This month</mat-option>
           <mat-option value="custom">Custom range</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-select" subscriptSizing="dynamic">
+        <mat-select [ngModel]="vendor()" (ngModelChange)="setVendor($event)" aria-label="Vendor">
+          <mat-option value="all">All vendors</mat-option>
+          @for (v of vendors(); track v.id) {
+            <mat-option [value]="v.id">{{ v.name }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -86,6 +95,7 @@
             <th class="sortable" (click)="sortBy('datetime')">
               Date &amp; Time <mat-icon class="sort-ic">{{ sortArrow('datetime') }}</mat-icon>
             </th>
+            <th>Vendor</th>
             <th>Drink</th>
             <th class="num sortable" (click)="sortBy('quantity')">
               Qty <mat-icon class="sort-ic">{{ sortArrow('quantity') }}</mat-icon>
@@ -102,6 +112,7 @@
           @for (t of paged(); track t.id) {
             <tr>
               <td>{{ fmtDateTime(t.datetime) }}</td>
+              <td class="vendor-cell">{{ t.vendor?.name || 'Unassigned' }}</td>
               <td><span class="tl-chip tl-chip--{{ t.beverageType }}">{{ t.beverageType }}</span></td>
               <td class="num">{{ t.quantity }}</td>
               <td class="num">{{ inr(t.unitPrice) }}</td>
@@ -118,7 +129,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="7" class="empty">
+              <td colspan="8" class="empty">
                 @if (transactions().length === 0) {
                   No entries yet — tap “Add Entry” to record your first order.
                 } @else {

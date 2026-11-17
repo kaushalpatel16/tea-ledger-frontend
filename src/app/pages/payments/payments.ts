@@ -1,11 +1,14 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { forkJoin } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { UiService } from '../../services/ui.service';
-import { Payment, PaymentMethod } from '../../models';
+import { Payment, PaymentMethod, VendorSummary } from '../../models';
 import { inr, fmtDate, fmtDateTime } from '../../util/format';
 
 interface MethodMeta {
@@ -16,7 +19,14 @@ interface MethodMeta {
 @Component({
   selector: 'tl-payments',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule,
+  ],
   templateUrl: './payments.html',
   styleUrl: './payments.css',
 })
@@ -29,6 +39,18 @@ export class Payments {
   paid = signal(0);
   lastPaymentDate = signal<string | null>(null);
   loading = signal(true);
+  /** Per-vendor billed / paid / pending. */
+  vendors = signal<VendorSummary[]>([]);
+  /** 'all' or a vendor id — filters the payment history. */
+  vendorFilter = signal<string>('all');
+
+  /** Only real vendors (not the synthetic "Unassigned" bucket) can receive payments. */
+  payableVendors = computed(() => this.vendors().filter((v) => v.vendorId !== 'unassigned'));
+
+  filteredPayments = computed(() => {
+    const v = this.vendorFilter();
+    return v === 'all' ? this.payments() : this.payments().filter((p) => p.vendor?.id === v);
+  });
 
   readonly inr = inr;
   readonly fmtDate = fmtDate;
@@ -57,6 +79,7 @@ export class Payments {
         this.payments.set(payments);
         this.pending.set(dashboard.cards.pending);
         this.paid.set(dashboard.cards.amountPaid);
+        this.vendors.set(dashboard.vendors);
         this.lastPaymentDate.set(dashboard.stats.lastPaymentDate);
         this.loading.set(false);
       },
@@ -72,12 +95,21 @@ export class Payments {
     return this.methodMeta[m] ?? { label: m, emoji: '💰' };
   }
 
-  recordPayment(): void {
-    this.ui.openPayment(this.pending());
+  private vendorPending(): Record<string, number> {
+    return Object.fromEntries(this.vendors().map((v) => [v.vendorId, v.pending]));
+  }
+
+  /** Record a payment, optionally pre-selecting a vendor (e.g. from the vendor table). */
+  recordPayment(vendorId?: string): void {
+    const filtered = this.vendorFilter();
+    this.ui.openPayment({
+      vendorPending: this.vendorPending(),
+      vendorId: vendorId ?? (filtered !== 'all' ? filtered : undefined),
+    });
   }
 
   edit(p: Payment): void {
-    this.ui.openPayment(undefined, p);
+    this.ui.openPayment({ payment: p, vendorPending: this.vendorPending() });
   }
 
   async remove(p: Payment): Promise<void> {
