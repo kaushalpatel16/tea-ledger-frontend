@@ -51,7 +51,7 @@ export class Entries {
   fromDate = signal<Date | null>(null);
   toDate = signal<Date | null>(null);
   beverage = signal<BeverageKey>('all');
-  /** 'all' or a vendor id. */
+  /** 'all' or a chai wala id. */
   vendor = signal<string>('all');
 
   // Sorting

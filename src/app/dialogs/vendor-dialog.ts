@@ -45,7 +45,7 @@ export const MOBILE_PATTERN = /^\+?[0-9\s-]{10,20}$/;
   template: `
     <h2 mat-dialog-title>
       <mat-icon style="color:var(--tl-accent)">{{ isEdit ? 'edit' : 'storefront' }}</mat-icon>
-      {{ isEdit ? 'Edit Vendor' : 'Add Vendor' }}
+      {{ isEdit ? 'Edit Chai Wala' : 'Add Chai Wala' }}
     </h2>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <mat-dialog-content>
@@ -53,7 +53,7 @@ export const MOBILE_PATTERN = /^\+?[0-9\s-]{10,20}$/;
           <div class="err">{{ error() }}</div>
         }
         <mat-form-field appearance="outline">
-          <mat-label>Vendor name</mat-label>
+          <mat-label>Chai Wala name</mat-label>
           <mat-icon matIconPrefix>storefront</mat-icon>
           <input matInput formControlName="name" placeholder="e.g. Ramesh Tea Stall" />
         </mat-form-field>
@@ -90,7 +90,7 @@ export const MOBILE_PATTERN = /^\+?[0-9\s-]{10,20}$/;
         <button mat-button type="button" [mat-dialog-close]="null">Cancel</button>
         <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
           <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
-          {{ isEdit ? 'Save Changes' : 'Add Vendor' }}
+          {{ isEdit ? 'Save Changes' : 'Add Chai Wala' }}
         </button>
       </mat-dialog-actions>
     </form>
@@ -143,7 +143,7 @@ export class VendorDialog {
     obs.subscribe({
       next: () => this.ref.close(this.isEdit ? 'updated' : 'created'),
       error: (err) => {
-        this.error.set(err?.error?.error || 'Could not save vendor');
+        this.error.set(err?.error?.error || 'Could not save chai wala');
         this.saving.set(false);
       },
     });

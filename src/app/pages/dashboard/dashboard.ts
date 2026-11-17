@@ -32,7 +32,7 @@ export class Dashboard {
 
   data = signal<DashboardData | null>(null);
   loading = signal(true);
-  /** 'all' or a vendor id; scopes the cards, stats and charts. */
+  /** 'all' or a chai wala id; scopes the cards, stats and charts. */
   vendorFilter = signal<string>('all');
   inr = inr;
   fmtDate = fmtDate;
@@ -60,7 +60,7 @@ export class Dashboard {
     (this.data()?.vendors ?? []).filter((v) => v.vendorId !== 'unassigned'),
   );
 
-  /** Vendor-wise totals; shows just the selected vendor when a filter is active. */
+  /** Chai Wala-wise totals; shows just the selected vendor when a filter is active. */
   vendorRows = computed(() => {
     const f = this.vendorFilter();
     const all = this.data()?.vendors ?? [];

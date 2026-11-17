@@ -11,7 +11,7 @@
         <mat-icon matIconPrefix>search</mat-icon>
         <input
           matInput
-          placeholder="Search vendor, notes or drink..."
+          placeholder="Search chai wala, notes or drink..."
           [ngModel]="search()"
           (ngModelChange)="onSearch($event)"
         />
@@ -33,8 +33,8 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filter-select" subscriptSizing="dynamic">
-        <mat-select [ngModel]="vendor()" (ngModelChange)="setVendor($event)" aria-label="Vendor">
-          <mat-option value="all">All vendors</mat-option>
+        <mat-select [ngModel]="vendor()" (ngModelChange)="setVendor($event)" aria-label="Chai Wala">
+          <mat-option value="all">All chai walas</mat-option>
           @for (v of vendors(); track v.id) {
             <mat-option [value]="v.id">{{ v.name }}</mat-option>
           }
@@ -95,7 +95,7 @@
             <th class="sortable" (click)="sortBy('datetime')">
               Date &amp; Time <mat-icon class="sort-ic">{{ sortArrow('datetime') }}</mat-icon>
             </th>
-            <th>Vendor</th>
+            <th>Chai Wala</th>
             <th>Drink</th>
             <th class="num sortable" (click)="sortBy('quantity')">
               Qty <mat-icon class="sort-ic">{{ sortArrow('quantity') }}</mat-icon>

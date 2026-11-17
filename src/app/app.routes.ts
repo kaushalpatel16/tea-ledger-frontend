@@ -47,7 +47,7 @@ export const routes: Routes = [
       },
       {
         path: 'vendors',
-        title: 'Vendors · Tea Mitra',
+        title: 'Chai Walas · Tea Mitra',
         canActivate: [adminGuard],
         loadComponent: () => import('./pages/vendors/vendors').then((m) => m.Vendors),
       },

@@ -111,15 +111,15 @@ function dayWithCurrentTime(day: Date): Date {
       <mat-dialog-content>
         <div class="grid">
           <mat-form-field appearance="outline" class="full">
-            <mat-label>Vendor</mat-label>
+            <mat-label>Chai Wala</mat-label>
             <mat-icon matIconPrefix>storefront</mat-icon>
-            <mat-select formControlName="vendor" required>
+            <mat-select formControlName="vendor" placeholder="Select Chai Wala" required>
               @for (v of vendors(); track v.id) {
                 <mat-option [value]="v.id">{{ v.name }} · {{ v.mobile }}</mat-option>
               }
             </mat-select>
             @if (form.controls.vendor.touched && form.controls.vendor.invalid) {
-              <mat-error>Please select a vendor</mat-error>
+              <mat-error>Please select a chai wala</mat-error>
             }
           </mat-form-field>
 

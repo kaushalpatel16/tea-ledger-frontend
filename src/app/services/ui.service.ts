@@ -42,7 +42,7 @@ export class UiService {
       firstValueFrom(this.api.getSettings()),
       firstValueFrom(this.api.getVendors()),
     ]);
-    // Entries can't exist without a vendor, so block creation until one has been added.
+    // Entries can't exist without a chai wala, so block creation until one has been added.
     if (!transaction && !this.ensureVendors(vendors)) return null;
     const ref = this.dialog.open(EntryDialog, {
       width: '560px',
@@ -81,8 +81,8 @@ export class UiService {
       data: { vendor },
     });
     const result = await firstValueFrom(ref.afterClosed());
-    if (result === 'created') this.toast('Vendor added');
-    if (result === 'updated') this.toast('Vendor updated');
+    if (result === 'created') this.toast('Chai Wala added');
+    if (result === 'updated') this.toast('Chai Wala updated');
     return result ?? null;
   }
 
@@ -91,8 +91,8 @@ export class UiService {
     if (vendors.length > 0) return true;
     this.toast(
       this.auth.isAdmin()
-        ? 'Add a vendor first (Vendors page) before creating entries'
-        : 'No vendors yet — ask an admin to add one',
+        ? 'Add a chai wala first (Chai Walas page) before creating entries'
+        : 'No chai walas yet — ask an admin to add one',
       '⚠',
     );
     return false;

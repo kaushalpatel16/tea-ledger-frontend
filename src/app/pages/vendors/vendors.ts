@@ -50,15 +50,15 @@ export class Vendors {
 
   async remove(v: Vendor): Promise<void> {
     const ok = await this.ui.confirm({
-      title: 'Delete vendor',
-      message: `Remove ${v.name}? Vendors that already have entries or payments cannot be deleted.`,
+      title: 'Delete chai wala',
+      message: `Remove ${v.name}? Chai Walas that already have entries or payments cannot be deleted.`,
       confirmText: 'Delete',
       danger: true,
     });
     if (!ok) return;
     this.api.deleteVendor(v.id).subscribe({
-      next: () => this.ui.toast('Vendor deleted'),
-      error: (e) => this.ui.toast(e?.error?.error || 'Could not delete vendor', '⚠'),
+      next: () => this.ui.toast('Chai Wala deleted'),
+      error: (e) => this.ui.toast(e?.error?.error || 'Could not delete chai wala', '⚠'),
     });
   }
 }

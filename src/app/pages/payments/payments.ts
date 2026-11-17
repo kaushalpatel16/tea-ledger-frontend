@@ -39,9 +39,9 @@ export class Payments {
   paid = signal(0);
   lastPaymentDate = signal<string | null>(null);
   loading = signal(true);
-  /** Per-vendor billed / paid / pending. */
+  /** Per-chai wala billed / paid / pending. */
   vendors = signal<VendorSummary[]>([]);
-  /** 'all' or a vendor id — filters the payment history. */
+  /** 'all' or a chai wala id — filters the payment history. */
   vendorFilter = signal<string>('all');
 
   /** Only real vendors (not the synthetic "Unassigned" bucket) can receive payments. */
@@ -99,7 +99,7 @@ export class Payments {
     return Object.fromEntries(this.vendors().map((v) => [v.vendorId, v.pending]));
   }
 
-  /** Record a payment, optionally pre-selecting a vendor (e.g. from the vendor table). */
+  /** Record a payment, optionally pre-selecting a chai wala (e.g. from the chai wala table). */
   recordPayment(vendorId?: string): void {
     const filtered = this.vendorFilter();
     this.ui.openPayment({

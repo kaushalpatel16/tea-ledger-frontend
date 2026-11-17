@@ -27,14 +27,14 @@
     </div>
   </div>
 
-  <!-- Vendor-wise balances -->
+  <!-- Chai Wala-wise balances -->
   <div class="tl-card history-card vendor-card">
-    <h2 class="tl-section-title">Vendor-wise balance</h2>
+    <h2 class="tl-section-title">Chai Wala-wise balance</h2>
     <div class="table-scroll">
       <table class="tl-table">
         <thead>
           <tr>
-            <th>Vendor</th>
+            <th>Chai Wala</th>
             <th class="num">Billed</th>
             <th class="num">Paid</th>
             <th class="num">Pending</th>
@@ -71,7 +71,7 @@
                 @if (loading()) {
                   Loading…
                 } @else {
-                  No vendors yet. An admin can add them on the Vendors page.
+                  No chai walas yet. An admin can add them on the Chai Walas page.
                 }
               </td>
             </tr>
@@ -85,8 +85,8 @@
     <div class="history-head">
       <h2 class="tl-section-title" style="margin:0">Payment history</h2>
       <mat-form-field appearance="outline" class="vendor-filter" subscriptSizing="dynamic">
-        <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)" aria-label="Vendor">
-          <mat-option value="all">All vendors</mat-option>
+        <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)" aria-label="Chai Wala">
+          <mat-option value="all">All chai walas</mat-option>
           @for (v of payableVendors(); track v.vendorId) {
             <mat-option [value]="v.vendorId">{{ v.name }}</mat-option>
           }
@@ -99,7 +99,7 @@
         <thead>
           <tr>
             <th>Date &amp; Time</th>
-            <th>Vendor</th>
+            <th>Chai Wala</th>
             <th class="num">Amount</th>
             <th>Method</th>
             <th>Notes</th>
@@ -143,7 +143,7 @@
                 @if (loading()) {
                   Loading payments…
                 } @else {
-                  No payments recorded yet. Use “Record Payment” when you pay the vendor.
+                  No payments recorded yet. Use “Record Payment” when you pay the chai wala.
                 }
               </td>
             </tr>

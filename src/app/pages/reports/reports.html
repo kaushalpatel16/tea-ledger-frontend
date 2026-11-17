@@ -18,9 +18,9 @@
     </mat-button-toggle-group>
 
     <mat-form-field appearance="outline" class="vendor-select">
-      <mat-label>Vendor</mat-label>
+      <mat-label>Chai Wala</mat-label>
       <mat-select [ngModel]="vendorFilter()" (ngModelChange)="vendorFilter.set($event)">
-        <mat-option value="all">All vendors</mat-option>
+        <mat-option value="all">All chai walas</mat-option>
         @for (v of vendorOptions(); track v.id) {
           <mat-option [value]="v.id">{{ v.name }}</mat-option>
         }
@@ -95,14 +95,14 @@
       }
     </section>
 
-    <!-- Vendor-wise summary -->
+    <!-- Chai Wala-wise summary -->
     <section class="tl-card detail">
-      <h2 class="tl-section-title">Vendor-wise summary</h2>
+      <h2 class="tl-section-title">Chai Wala-wise summary</h2>
       <div class="table-scroll">
         <table class="tl-table">
           <thead>
             <tr>
-              <th>Vendor</th>
+              <th>Chai Wala</th>
               <th class="num">Orders</th>
               <th class="num">Tea</th>
               <th class="num">Coffee</th>
@@ -123,7 +123,7 @@
                 <td class="num">{{ inr(v.pending) }}</td>
               </tr>
             } @empty {
-              <tr><td colspan="7" class="empty">No vendors yet.</td></tr>
+              <tr><td colspan="7" class="empty">No chai walas yet.</td></tr>
             }
           </tbody>
         </table>
@@ -138,7 +138,7 @@
           <thead>
             <tr>
               <th>Date &amp; Time</th>
-              <th>Vendor</th>
+              <th>Chai Wala</th>
               <th>Drink</th>
               <th class="num">Qty</th>
               <th class="num">Unit Price</th>

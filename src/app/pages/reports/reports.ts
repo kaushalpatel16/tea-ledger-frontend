@@ -52,17 +52,17 @@ export class Reports {
   /** Last 24 months, newest first, for the month dropdown. */
   readonly monthOptions = buildMonthOptions(24);
 
-  /** 'all' or a vendor id. */
+  /** 'all' or a chai wala id. */
   vendorFilter = signal<string>('all');
   vendorOptions = signal<Vendor[]>([]);
 
   report = signal<ReportData | null>(null);
   loading = signal(false);
 
-  /** Label of the vendor currently filtered on ('All vendors' otherwise). */
+  /** Label of the chai wala currently filtered on ('All chai walas' otherwise). */
   vendorLabel = computed(() => {
     const id = this.vendorFilter();
-    return id === 'all' ? 'All vendors' : (this.vendorOptions().find((v) => v.id === id)?.name ?? '');
+    return id === 'all' ? 'All chai walas' : (this.vendorOptions().find((v) => v.id === id)?.name ?? '');
   });
 
   rangeLabel = computed(() => {
@@ -71,7 +71,7 @@ export class Reports {
     return `${fmtDate(r.range.from)} – ${fmtDate(r.range.to)} · ${this.vendorLabel()}`;
   });
 
-  /** Vendor-wise totals; just the selected vendor when filtered. */
+  /** Chai Wala-wise totals; just the selected vendor when filtered. */
   vendorRows = computed(() => {
     const r = this.report();
     const f = this.vendorFilter();
@@ -157,7 +157,7 @@ export class Reports {
     const r = this.report();
     return (r?.transactions ?? []).map((t) => ({
       Date: fmtDateTime(t.datetime),
-      Vendor: t.vendor?.name || 'Unassigned',
+      'Chai Wala': t.vendor?.name || 'Unassigned',
       Drink: t.beverageType,
       Quantity: t.quantity,
       'Unit Price': t.unitPrice,
@@ -189,7 +189,7 @@ export class Reports {
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const headers = Object.keys(rows[0] ?? {
-      Date: '', Vendor: '', Drink: '', Quantity: '', 'Unit Price': '', Total: '', Notes: '',
+      Date: '', 'Chai Wala': '', Drink: '', Quantity: '', 'Unit Price': '', Total: '', Notes: '',
     });
     const lines: string[] = [];
     lines.push(`Tea Mitra Report,${this.rangeLabel()}`);
@@ -197,8 +197,8 @@ export class Reports {
     lines.push('Summary');
     for (const [k, v] of this.summaryRows()) lines.push(`${esc(k)},${esc(v)}`);
     lines.push('');
-    lines.push('Vendor-wise summary');
-    lines.push('Vendor,Mobile,Orders,Billed,Paid,Pending');
+    lines.push('Chai Wala-wise summary');
+    lines.push('Chai Wala,Mobile,Orders,Billed,Paid,Pending');
     for (const v of this.vendorRows()) {
       lines.push([v.name, v.mobile, v.orders, v.billed, v.paid, v.pending].map(esc).join(','));
     }
@@ -221,7 +221,7 @@ export class Reports {
     XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
     const vendorWs = XLSX.utils.json_to_sheet(
       this.vendorRows().map((v) => ({
-        Vendor: v.name,
+        'Chai Wala': v.name,
         Mobile: v.mobile,
         Orders: v.orders,
         Billed: v.billed,
@@ -229,7 +229,7 @@ export class Reports {
         Pending: v.pending,
       })),
     );
-    XLSX.utils.book_append_sheet(wb, vendorWs, 'Vendors');
+    XLSX.utils.book_append_sheet(wb, vendorWs, 'Chai Walas');
     const txWs = XLSX.utils.json_to_sheet(this.rows());
     XLSX.utils.book_append_sheet(wb, txWs, 'Transactions');
     XLSX.writeFile(wb, `${this.baseName()}.xlsx`);
@@ -261,7 +261,7 @@ export class Reports {
 
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 8,
-      head: [['Vendor', 'Orders', 'Billed', 'Paid', 'Pending']],
+      head: [['Chai Wala', 'Orders', 'Billed', 'Paid', 'Pending']],
       body: this.vendorRows().map((v) => [
         v.name,
         v.orders,
@@ -277,9 +277,9 @@ export class Reports {
     const rows = this.rows();
     autoTable(doc, {
       startY: (doc as any).lastAutoTable.finalY + 8,
-      head: [['Date', 'Vendor', 'Drink', 'Qty', 'Unit', 'Total', 'Notes']],
+      head: [['Date', 'Chai Wala', 'Drink', 'Qty', 'Unit', 'Total', 'Notes']],
       body: rows.map((row) => [
-        row.Date, row.Vendor, row.Drink, row.Quantity, row['Unit Price'], row.Total, row.Notes,
+        row.Date, row['Chai Wala'], row.Drink, row.Quantity, row['Unit Price'], row.Total, row.Notes,
       ]),
       theme: 'striped',
       headStyles: { fillColor: [34, 160, 107] },
